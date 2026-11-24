@@ -202,3 +202,21 @@ drop policy if exists "admins update requests" on public.recipe_requests;
 create policy "admins update requests" on public.recipe_requests for update to authenticated using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "admins delete requests" on public.recipe_requests;
 create policy "admins delete requests" on public.recipe_requests for delete to authenticated using (public.is_admin());
+
+-- Admin-only "Needs more" list: recipes the owner wants to improve, with a private note.
+create table if not exists public.recipe_flags (
+  recipe_id text primary key check (char_length(recipe_id) between 1 and 80),
+  note text not null default '' check (char_length(note) <= 1000),
+  created_at timestamptz not null default now()
+);
+alter table public.recipe_flags enable row level security;
+revoke all on public.recipe_flags from anon, authenticated;
+grant select, insert, update, delete on public.recipe_flags to authenticated;
+drop policy if exists "admins read flags" on public.recipe_flags;
+create policy "admins read flags" on public.recipe_flags for select to authenticated using (public.is_admin());
+drop policy if exists "admins add flags" on public.recipe_flags;
+create policy "admins add flags" on public.recipe_flags for insert to authenticated with check (public.is_admin());
+drop policy if exists "admins edit flags" on public.recipe_flags;
+create policy "admins edit flags" on public.recipe_flags for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "admins remove flags" on public.recipe_flags;
+create policy "admins remove flags" on public.recipe_flags for delete to authenticated using (public.is_admin());
