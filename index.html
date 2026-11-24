@@ -147,6 +147,9 @@ body.ingallery #grid,body.ingallery #empty,body.ingallery #foot,body.ingallery .
 .rqs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;max-width:820px}
 .rq{display:flex;align-items:flex-start;gap:14px;background:var(--paper);border-radius:18px;padding:14px 18px;box-shadow:0 1px 0 rgba(120,90,50,.05),0 8px 24px rgba(160,105,40,.1)}
 .rq.done{opacity:.62}.rq.done .rq-name{text-decoration:line-through}
+.flags{display:flex;flex-direction:column;gap:6px;flex:none;font-size:.9rem}
+.flags label{display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.flags input{width:18px;height:18px;margin:0;accent-color:#4F7A44}
 .sthumb{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:none}
 .rq-check{position:relative;flex:none;width:26px;height:26px;margin-top:2px}
 .rq-check input{width:26px;height:26px;margin:0;accent-color:#4F7A44;cursor:pointer}
@@ -1196,8 +1199,8 @@ async function submitAuth(){
 let adminReady = false, adminTab = 'members', anaDays = 30, openReq = 0, reqFilter = 'open';
 const adminHash = () => adminTab === 'analytics' ? '#analytics' : adminTab === 'requests' ? '#requests' : adminTab === 'soon' ? '#coming-soon' : '#admin';
 let soonFilter = 'toget';
-const soonLeft = () => recipes.filter(r => isSoon(r) && !r.received).length;
-const adminBlurb = () => adminTab === 'analytics' ? 'How the family is using Moo-ruchi.' : adminTab === 'requests' ? 'Recipes people asked for or sent in. Check them off once you have added them.' : adminTab === 'soon' ? 'Recipes on the site that are still marked Coming soon. Tick one once you have the recipe in hand. It leaves this list when the recipe is added.' : 'Everyone with an account. Admins can delete any gallery photo and manage roles.';
+const soonLeft = () => recipes.filter(r => !isAdded(r) && !r.received).length;
+const adminBlurb = () => adminTab === 'analytics' ? 'How the family is using Moo-ruchi.' : adminTab === 'requests' ? 'Recipes people asked for or sent in. Check them off once you have added them.' : adminTab === 'soon' ? 'Every recipe on the site. Tick Received when you have the recipe in hand, and Added to site once it is up. Recipes that already have their steps count as added.' : 'Everyone with an account. Admins can delete any gallery photo and manage roles.';
 function adminHead(){
   const t = (k, l) => `<button class="tab" role="tab" type="button" data-atab="${k}" aria-selected="${adminTab === k}">${l}</button>`;
   return `<div class="gal-head"><div><h2>Admin</h2><p>${adminBlurb()}</p></div></div>
@@ -1245,16 +1248,23 @@ async function renderRequests(){
   }catch(e){ $('abody').innerHTML = '<p class="err">Could not load requests: ' + esc(e.message) + '</p>'; }
 }
 /* ---- coming soon checklist ---- */
+const isAdded = r => !!r.added || !isSoon(r);
 function soonHtml(){
-  const all = recipes.filter(isSoon);
-  const toget = all.filter(r => !r.received), got = all.filter(r => r.received);
-  const shown = soonFilter === 'toget' ? toget : soonFilter === 'got' ? got : all;
+  const all = recipes.slice();
+  const toget = all.filter(r => !isAdded(r) && !r.received), got = all.filter(r => !isAdded(r) && r.received), added = all.filter(isAdded);
+  const shown = soonFilter === 'toget' ? toget : soonFilter === 'got' ? got : soonFilter === 'added' ? added : all;
   const f = (k, l, n) => `<button class="tab" type="button" data-sf="${k}" aria-pressed="${soonFilter === k}">${l} <span class="n">${n}</span></button>`;
-  const items = shown.map(r => `<li class="rq${r.received ? ' done' : ''}"><label class="rq-check"><input type="checkbox" data-srec="${esc(r.id)}"${r.received ? ' checked' : ''}><span class="sr">Mark ${esc(r.title)} as received</span></label>
+  const items = shown.map(r => {
+    const add = isAdded(r), auto = !isSoon(r);
+    const state = add ? 'On the site' : r.received ? 'Recipe received, waiting to be added to the site' : 'Waiting for the recipe';
+    return `<li class="rq${add ? ' done' : ''}">
     ${photoSigned[r.photo] ? `<img class="sthumb" src="${esc(photoSigned[r.photo])}" alt="">` : ''}
     <div class="rq-main"><div class="rq-top"><b class="rq-name">${esc(r.title)}</b><span class="badge soon-tag">${esc(r.cat)}</span>${(r.tags || []).includes('Gluten free') ? '<span class="badge gf-tag">Gluten free</span>' : ''}</div>
-    <div class="hint">${r.received ? 'Recipe received, waiting to be added to the site' : 'Waiting for the recipe'}</div></div></li>`).join('');
-  return `<div class="periods" role="group" aria-label="Show">${f('toget', 'To get', toget.length)}${f('got', 'Received', got.length)}${f('all', 'All', all.length)}</div>
+    <div class="hint">${state}</div></div>
+    <div class="flags"><label><input type="checkbox" data-sflag="received" data-srec="${esc(r.id)}"${r.received || add ? ' checked' : ''}${add ? ' disabled' : ''}> Received</label>
+    <label><input type="checkbox" data-sflag="added" data-srec="${esc(r.id)}"${add ? ' checked' : ''}${auto ? ' disabled' : ''}> Added to site</label></div></li>`;
+  }).join('');
+  return `<div class="periods" role="group" aria-label="Show">${f('toget', 'To get', toget.length)}${f('got', 'Received', got.length)}${f('added', 'Added', added.length)}${f('all', 'All', all.length)}</div>
     ${items ? `<ul class="rqs">${items}</ul>` : `<p class="gal-msg">${soonFilter === 'toget' ? 'Every recipe is in. Nothing left to chase!' : 'Nothing here yet.'}</p>`}
     <p class="err" id="sverr" role="alert" hidden></p>`;
 }
@@ -1324,12 +1334,14 @@ $('adminpage').addEventListener('change', async e => {
   const sc = e.target.closest('[data-srec]');
   if(sc){
     const r = recipes.find(x => x.id === sc.dataset.srec); if(!r) return;
-    const want = sc.checked; sc.disabled = true;
+    const flag = sc.dataset.sflag, want = sc.checked; sc.disabled = true;
     try{
-      const { id, ...rest } = r; rest.received = want; if(!want) delete rest.received;
+      const { id, ...rest } = r;
+      if(flag === 'received'){ if(want) rest.received = true; else delete rest.received; }
+      else { if(want){ rest.added = true; rest.received = true; } else delete rest.added; }
       const res = await sb('/rest/v1/recipes?id=eq.' + encodeURIComponent(id), jsonOpts('PATCH', { data: rest }, { Prefer:'return=representation' }));
       if(!res || !res.length) throw new Error('Not allowed');
-      if(want) r.received = true; else delete r.received;
+      ['received', 'added'].forEach(k => { if(rest[k]) r[k] = true; else delete r[k]; });
       $('abody').innerHTML = soonHtml();
       const tb = document.querySelector('[data-atab="soon"]'); if(tb) tb.innerHTML = 'Coming soon' + (soonLeft() ? ` <span class="n">${soonLeft()}</span>` : '');
     }catch(er){ sc.checked = !want; sc.disabled = false; $('sverr').textContent = 'Could not update: ' + er.message; $('sverr').hidden = false; }
