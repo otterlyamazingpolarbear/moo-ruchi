@@ -1235,7 +1235,7 @@ function reqHtml(){
   const nOpen = reqRows.filter(r => !r.done).length, nDone = reqRows.length - nOpen;
   const f = (k, l, n) => `<button class="tab" type="button" data-rf="${k}" aria-pressed="${reqFilter === k}">${l} <span class="n">${n}</span></button>`;
   const items = shown.map(r => {
-    const who = r.from_name || r.author_name || 'Someone';
+    const who = r.from_name || r.author_name || 'Anonymous';
     const sub = r.author_name && r.from_name && r.from_name !== r.author_name ? ` (account: ${esc(r.author_name)})` : '';
     const body = (r.details || r.extra || (r.tags && r.tags.length)) ? `<details class="rq-more"><summary>${r.kind === 'add' ? 'Show the recipe they sent' : 'Show their notes'}</summary>${r.tags && r.tags.length ? `<p class="hint">Tags: ${esc(r.tags.join(', '))}</p>` : ''}${r.details ? `<pre class="rq-text">${esc(r.details)}</pre>` : ''}${r.extra ? `<p class="hint">Also: ${esc(r.extra)}</p>` : ''}</details>` : '';
     return `<li class="rq${r.done ? ' done' : ''}"><label class="rq-check"><input type="checkbox" data-rdone="${esc(r.id)}"${r.done ? ' checked' : ''}><span class="sr">Mark ${esc(r.recipe_name)} as added</span></label>
