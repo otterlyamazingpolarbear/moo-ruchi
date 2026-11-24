@@ -173,3 +173,32 @@ create policy "signed-in users can view recipe photos" on storage.objects for se
 drop policy if exists "admins manage recipe photos" on storage.objects;
 create policy "admins manage recipe photos" on storage.objects for all to authenticated
   using (bucket_id = 'recipe-photos' and public.is_admin()) with check (bucket_id = 'recipe-photos' and public.is_admin());
+
+-- Recipe requests and recipes people send in (shown to admins on the Requests tab to check off).
+create table if not exists public.recipe_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  kind text not null check (kind in ('request','add')),
+  recipe_name text not null check (char_length(recipe_name) between 1 and 200),
+  details text not null default '' check (char_length(details) <= 20000),
+  tags text[] not null default '{}',
+  extra text not null default '' check (char_length(extra) <= 5000),
+  from_name text not null default '' check (char_length(from_name) <= 100),
+  author_name text not null default '' check (char_length(author_name) <= 100),
+  done boolean not null default false,
+  done_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists recipe_requests_created_idx on public.recipe_requests (created_at desc);
+alter table public.recipe_requests enable row level security;
+revoke all on public.recipe_requests from anon, authenticated;
+grant select, insert, delete on public.recipe_requests to authenticated;
+grant update (done, done_at) on public.recipe_requests to authenticated;
+drop policy if exists "send own requests" on public.recipe_requests;
+create policy "send own requests" on public.recipe_requests for insert to authenticated with check (user_id = auth.uid() and done = false);
+drop policy if exists "read own or admin" on public.recipe_requests;
+create policy "read own or admin" on public.recipe_requests for select to authenticated using (user_id = auth.uid() or public.is_admin());
+drop policy if exists "admins update requests" on public.recipe_requests;
+create policy "admins update requests" on public.recipe_requests for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "admins delete requests" on public.recipe_requests;
+create policy "admins delete requests" on public.recipe_requests for delete to authenticated using (public.is_admin());
