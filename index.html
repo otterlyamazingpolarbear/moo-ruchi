@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moo-ruchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Hind:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: warm ivory page lit with peach and blush, banana leaves in the top corner, airy masonry of pale tiles, recipe opens as a bright sheet. */
+  --ivory:#FBF5EA;
+  --paper:#FFFDF8;
+  --ink:#3A2A20;
+  --ink-soft:#7A6556;
+  --sand:#EBDDC3;
+  --marigold:#F4A93D;
+  --marigold-deep:#A85A0A;
+  --butter:#FBF1D8;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Hind','Segoe UI',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  background-color:var(--ivory);
+  background-image:
+    radial-gradient(820px 440px at 6% -4%, rgba(252,214,170,.8), transparent 65%),
+    radial-gradient(720px 440px at 100% 0%, rgba(248,203,214,.55), transparent 62%);
+  background-repeat:no-repeat;
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.5;
+}
+body.locked{overflow:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid #E58A12;outline-offset:3px}
+
+/* masthead */
+header{position:relative;overflow:hidden}
+.leaves{position:absolute;top:0;right:calc(max(0px, (100% - 1240px) / 2) + 24px);width:760px;height:300px;pointer-events:none}
+.leaves svg{overflow:visible}
+@media (max-width:1120px){.leaves{width:360px;height:300px}.leaves .extra{display:none}}
+.leaves svg{display:block;width:100%;height:100%}
+.masthead{
+  position:relative;max-width:1240px;margin:0 auto;padding:46px 24px 14px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:16px;
+}
+h1{
+  font-family:var(--display);font-weight:400;font-variation-settings:"opsz" 144;
+  font-size:clamp(2.3rem,5.6vw,3.8rem);line-height:1.04;letter-spacing:-.015em;margin:0;
+  color:var(--ink);text-wrap:balance;
+}
+.tagline{margin:8px 0 0;color:var(--ink-soft);font-size:1.05rem;max-width:34em}
+.actions{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.search{width:min(380px,100%)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  font:inherit;font-weight:500;font-size:.97rem;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;padding:10px 20px;line-height:1.3;
+  background:rgba(255,255,255,.8);color:var(--ink);border:1px solid var(--sand);
+  box-shadow:0 2px 10px rgba(150,100,40,.08);transition:background .15s,border-color .15s;
+}
+.btn:hover{background:#fff;border-color:#E2CDA2}
+.btn.primary{background:var(--marigold);border-color:var(--marigold)}
+.btn.primary:hover{background:#F6B552;border-color:#F6B552}
+.btn[disabled]{opacity:.6;cursor:default}
+.search input{
+  width:100%;font:inherit;font-size:1rem;color:var(--ink);
+  background:rgba(255,255,255,.85);border:1px solid var(--sand);border-radius:999px;
+  padding:11px 20px;box-shadow:0 2px 10px rgba(150,100,40,.08);
+}
+.search input::placeholder{color:var(--ink-soft)}
+.kolam-line{height:12px;max-width:1240px;margin:8px auto 0;padding:0 24px;opacity:.9}
+.kolam-line svg{display:block;width:100%;height:12px}
+
+/* section tabs */
+.tabs{
+  position:relative;max-width:1240px;margin:0 auto;padding:16px 24px 26px;
+  display:flex;gap:10px;flex-wrap:wrap;
+}
+.tab{
+  font:inherit;font-weight:500;font-size:.97rem;cursor:pointer;
+  color:var(--ink);background:rgba(255,255,255,.6);
+  border:1px solid var(--sand);border-radius:999px;padding:7px 17px;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:background .15s,border-color .15s;
+}
+.tab .n{font-size:.8rem;color:var(--ink-soft)}
+.tablist{display:flex;gap:10px;flex-wrap:wrap}
+.tab.toggle{margin-left:8px}
+.tab.toggle[aria-pressed="true"]{background:#4F7A44;border-color:#4F7A44;color:#fff}
+.tab.toggle[aria-pressed="true"] .n{color:#fff}
+.tab.toggle#soonf{margin-left:0}
+.tab.toggle#soonf::before{background:#3A2A20}
+.tab.toggle#soonf[aria-pressed="true"]{background:#3A2A20;border-color:#3A2A20;color:#FFF4DA}
+.tab.toggle#soonf[aria-pressed="true"]::before{background:#FFF4DA}
+.tab.toggle::before{content:"";width:9px;height:9px;border-radius:50%;background:#4F7A44}
+.tab.toggle[aria-pressed="true"]::before{background:#fff}
+.tab:hover{background:#fff;border-color:#E2CDA2}
+.tab[aria-selected="true"]{background:var(--marigold);border-color:var(--marigold);color:var(--ink)}
+.tab[aria-selected="true"] .n{color:var(--ink)}
+
+/* grid */
+.grid{max-width:1240px;margin:0 auto;padding:0 24px 40px;columns:230px;column-gap:22px}
+.card{
+  display:block;text-decoration:none;
+  background:var(--paper);color:var(--ink);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 1px 0 rgba(120,90,50,.05),0 10px 30px rgba(160,105,40,.13);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.cardwrap{position:relative;break-inside:avoid;margin:0 0 22px}
+.card:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(120,90,50,.05),0 16px 36px rgba(160,105,40,.2)}
+.card .cover{padding:8px 8px 0;position:relative}
+.badges{position:absolute;top:17px;left:17px;right:17px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
+.badge{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:4px 10px;border-radius:999px;line-height:1.25}
+.badges .badge{box-shadow:0 1px 5px rgba(0,0,0,.2)}
+.soon-tag{background:rgba(58,42,32,.88);color:#FFF4DA}
+.gf-tag{background:#4F7A44;color:#fff}
+.chips .badge{display:inline-flex;align-items:center;padding:8px 14px}
+.card .cover svg,.card .cover img{display:block;width:100%;height:auto;border-radius:13px}
+.card .body{padding:12px 16px 16px}
+.cat{font-size:.72rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--marigold-deep)}
+.card h2{font-family:var(--display);font-weight:500;font-size:1.22rem;line-height:1.2;margin:4px 0 4px;text-wrap:balance}
+.meta-line{font-size:.88rem;color:var(--ink-soft)}
+.empty{max-width:1240px;margin:0 auto;padding:30px 24px 60px;font-size:1.1rem;color:var(--ink-soft)}
+.foot{max-width:1240px;margin:0 auto;padding:10px 24px 44px;color:var(--ink-soft);font-size:.9rem}
+
+
+/* gallery */
+body.gated header,body.gated main,body.gated .foot{visibility:hidden}
+body.gated .modal{background:linear-gradient(160deg,#FCE9CF,#FBF5EA 45%,#F9DDE3);-webkit-backdrop-filter:none;backdrop-filter:none}
+body.ingallery #grid,body.ingallery #empty,body.ingallery #foot,body.ingallery .tabs .toggle,body.ingallery .search{display:none}
+.acct{position:absolute;top:16px;right:calc(max(0px,(100% - 1240px)/2) + 24px);z-index:3;display:flex;align-items:center;gap:10px;font-size:.95rem;color:var(--ink-soft)}
+.acct .btn{padding:7px 16px;font-size:.92rem}
+.acct a.adminbadge{text-decoration:none;cursor:pointer}
+.acct a.adminbadge:hover{background:#F6B552}
+#galbtn[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold)}
+.gallery{max-width:1240px;margin:0 auto;padding:6px 24px 50px}
+.gallery[hidden]{display:none}
+.gal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 20px}
+.gal-head h2{font-family:var(--display);font-weight:400;font-variation-settings:"opsz" 144;font-size:clamp(1.7rem,3.6vw,2.2rem);margin:0;line-height:1.1}
+.gal-head p{margin:4px 0 0;color:var(--ink-soft)}
+.gal-who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.95rem;color:var(--ink-soft)}
+.adminbadge{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--marigold);color:var(--ink);margin-left:4px}
+.adm-h{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0 0 8px}
+.members{list-style:none;margin:0;padding:0}
+.members{max-width:720px}
+.members li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--sand)}
+.members .mi{min-width:0;overflow-wrap:anywhere}
+.members .mi small{display:block;color:var(--ink-soft)}
+.linkbtn{font:inherit;background:none;border:0;padding:0;color:var(--marigold-deep);text-decoration:underline;cursor:pointer}
+.gal-grid{columns:250px;column-gap:20px}
+.gcard{break-inside:avoid;margin:0 0 20px;background:var(--paper);border-radius:20px;overflow:hidden;box-shadow:0 1px 0 rgba(120,90,50,.05),0 10px 30px rgba(160,105,40,.13)}
+.gcard .ph{display:block;width:100%;padding:8px 8px 0;background:none;border:0;cursor:zoom-in}
+.gcard img{display:block;width:100%;height:auto;border-radius:13px;background:var(--butter)}
+.gcard .gb{padding:10px 16px 14px}
+.gcard .cap{margin:0 0 6px;font-size:1rem;line-height:1.4;overflow-wrap:anywhere}
+.gcard .by{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.84rem;color:var(--ink-soft)}
+.gcard .acts{display:flex;gap:12px}
+.gcard .edit{font:inherit;font-size:.84rem;background:none;border:0;color:var(--marigold-deep);cursor:pointer;padding:2px 0}
+.gcard .del{font:inherit;font-size:.84rem;background:none;border:0;color:#9A3A1E;cursor:pointer;padding:2px 0}
+.gal-msg{color:var(--ink-soft);font-size:1.05rem;padding:20px 0}
+.field input.tx{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:#fff;border:1px solid var(--sand);border-radius:12px;padding:11px 14px}
+.field input.tx:focus-visible{outline:3px solid #E58A12;outline-offset:1px;border-color:#E58A12}
+.field input[type="file"]{font:inherit;padding:10px;border:1px dashed #E2CDA2;border-radius:12px;background:#fff;width:100%}
+.car{position:relative}
+.car .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.car .track::-webkit-scrollbar{display:none}
+.car .slide{flex:0 0 100%;scroll-snap-align:center;min-width:0}
+.car:not(.big) .slide{padding:8px 8px 0;background:none;border:0;cursor:zoom-in}
+.car:not(.big).many .slide img{aspect-ratio:1/1;object-fit:cover}
+.car.big .slide img{width:100%;max-height:68vh;object-fit:contain;border-radius:13px;background:var(--butter);display:block}
+.cnav{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,253,248,.92);color:var(--ink);font-size:1.5rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;padding:0 0 3px}
+.cnav[hidden]{display:none}
+.cnav.prev{left:14px}.cnav.next{right:14px}
+.car.big .cnav.prev{left:8px}.car.big .cnav.next{right:8px}
+.dots{display:flex;justify-content:center;gap:6px;padding:8px 0 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:#DCCBAE}
+.dots i.on{background:var(--marigold-deep)}
+.ed-list{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px}
+.ed-list li{display:flex;align-items:center;gap:12px;padding:8px;border:1px solid var(--sand);border-radius:14px;background:#fff}
+.ed-list img{width:64px;height:64px;object-fit:cover;border-radius:10px;flex:none}
+.ed-list .lbl{flex:1;font-size:.92rem;color:var(--ink-soft)}
+.ed-list .mv{display:flex;gap:6px}
+.ed-list .mv button{width:36px;height:36px;border-radius:50%;border:1px solid var(--sand);background:var(--paper);font-size:1.1rem;cursor:pointer;color:var(--ink)}
+.ed-list .mv button:disabled{opacity:.35;cursor:default}
+.pvrow{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.pvrow img{width:76px;height:76px;object-fit:cover;border-radius:10px}
+.pv[hidden]{display:none}
+.pv{display:block;max-width:100%;max-height:260px;border-radius:13px;margin:0 0 18px}
+.authtabs{display:flex;gap:8px;margin:0 0 18px}
+.bigphoto{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain;border-radius:13px;background:var(--butter)}
+.bigcap{margin:14px 0 4px;font-size:1.1rem}
+
+/* recipe sheet */
+.modal{
+  position:fixed;inset:0;z-index:20;overflow-y:auto;
+  background:rgba(58,42,32,.4);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;
+}
+.modal[hidden]{display:none}
+.sheet{
+  position:relative;margin:auto;width:min(980px,100%);
+  background:var(--paper);color:var(--ink);
+  border-radius:26px;padding:32px;
+  box-shadow:0 30px 70px rgba(58,42,32,.28);
+}
+.close{
+  position:absolute;top:16px;right:16px;z-index:2;width:42px;height:42px;border-radius:50%;
+  background:#fff;color:var(--ink);border:1px solid var(--sand);cursor:pointer;
+  font-size:1.4rem;line-height:1;display:grid;place-items:center;
+  box-shadow:0 2px 8px rgba(150,100,40,.12);
+}
+.close:hover{background:var(--butter)}
+.hero{display:grid;grid-template-columns:260px minmax(0,1fr);gap:32px;align-items:center}
+.hero-cover{border-radius:18px;overflow:hidden}
+.hero-cover svg,.hero-cover img{display:block;width:100%;height:auto}
+.hero h2{
+  font-family:var(--display);font-weight:400;font-variation-settings:"opsz" 144;
+  font-size:clamp(2rem,4.6vw,3rem);line-height:1.08;letter-spacing:-.01em;
+  margin:6px 0 16px;text-wrap:balance;padding-right:44px;
+}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{background:var(--butter);border-radius:999px;padding:5px 15px;font-size:.93rem}
+.chip b{font-weight:600}
+.from{margin:14px 0 0;color:var(--ink-soft);font-style:italic}
+.cols{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:42px;margin-top:34px}
+.sheet h3{
+  font-family:var(--display);font-weight:500;font-size:1.3rem;color:var(--ink);
+  margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--sand);
+  display:flex;align-items:center;gap:10px;
+}
+.sheet h3 svg{width:22px;height:22px;flex:none}
+.ings{list-style:none;margin:0;padding:0}
+.ings li{border-bottom:1px solid #F3EADA}
+.ings label{display:flex;gap:12px;align-items:flex-start;padding:9px 0;cursor:pointer}
+.ings input{width:19px;height:19px;margin:3px 0 0;flex:none;accent-color:#E58A12}
+.ings input:checked + span{text-decoration:line-through;opacity:.45}
+.steps{list-style:none;margin:0;padding:0;counter-reset:step}
+.steps li{counter-increment:step;position:relative;padding:0 0 18px 48px;line-height:1.62}
+.cols[hidden]{display:none}
+.ref-sec{margin-top:30px}
+.tbl-wrap{overflow-x:auto}
+table.ref{width:100%;border-collapse:collapse;font-size:1rem}
+table.ref th{text-align:left;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--marigold-deep);padding:10px 14px 8px 0;border-bottom:1px solid var(--sand)}
+table.ref td{padding:13px 14px 13px 0;border-bottom:1px solid #F3EADA}
+.sheet.formsheet{width:min(640px,100%)}
+.formsheet h2{font-family:var(--display);font-weight:400;font-variation-settings:"opsz" 144;font-size:clamp(1.8rem,4vw,2.3rem);line-height:1.1;margin:0 0 8px;padding-right:44px}
+.lead{margin:0 0 22px;color:var(--ink-soft)}
+.field{display:flex;flex-direction:column;gap:6px;margin:0 0 18px;border:0;padding:0;min-width:0}
+.field>label,.field>legend{font-weight:600;font-size:.95rem;padding:0}
+.field .opt,.field .req{font-weight:400;font-size:.82rem;color:var(--ink-soft);margin-left:6px}
+.field input[type="text"],.field textarea{
+  width:100%;font:inherit;font-size:1rem;color:var(--ink);background:#fff;
+  border:1px solid var(--sand);border-radius:12px;padding:11px 14px;
+}
+.field textarea{min-height:110px;resize:vertical;line-height:1.5}
+.field textarea.tall{min-height:200px}
+.field input::placeholder,.field textarea::placeholder{color:#A59383}
+.field input:focus-visible,.field textarea:focus-visible{outline:3px solid #E58A12;outline-offset:1px;border-color:#E58A12}
+.hint{margin:0;font-size:.86rem;color:var(--ink-soft)}
+.tagrow{display:flex;gap:8px;flex-wrap:wrap}
+.tagchip{position:relative;cursor:pointer}
+.tagchip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.tagchip span{display:inline-block;padding:7px 15px;border-radius:999px;border:1px solid var(--sand);background:#fff;font-size:.95rem}
+.tagchip input:checked + span{background:var(--marigold);border-color:var(--marigold)}
+.tagchip input:focus-visible + span{outline:3px solid #E58A12;outline-offset:2px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.err a{color:inherit;font-weight:600}
+.ok{margin:0 0 14px;padding:10px 14px;border-radius:12px;background:#E4F0DC;color:#2F5A27}
+.err{margin:0 0 14px;padding:10px 14px;border-radius:12px;background:#FCE3DC;color:#7A2A12}
+.thanks{text-align:left;padding:10px 0 4px}
+.thanks p{margin:0 0 20px;color:var(--ink-soft)}
+.fav{
+  position:absolute;top:16px;right:16px;z-index:2;width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;cursor:pointer;padding:0;
+  background:rgba(255,253,248,.92);border:0;box-shadow:0 2px 8px rgba(80,50,20,.22);
+  transition:transform .15s ease;
+}
+.fav:hover{transform:scale(1.08)}
+.fav svg,.favbtn svg{width:19px;height:19px;fill:none;stroke:#3A2A20;stroke-width:2;stroke-linejoin:round}
+.fav[aria-pressed="true"] svg,.favbtn[aria-pressed="true"] svg{fill:#D9446B;stroke:#D9446B}
+.favbtn{
+  font:inherit;font-weight:500;font-size:.95rem;cursor:pointer;margin-top:16px;
+  display:inline-flex;align-items:center;gap:8px;padding:8px 18px 8px 14px;border-radius:999px;
+  background:#fff;color:var(--ink);border:1px solid var(--sand);
+}
+.favbtn:hover{background:var(--butter)}
+.favbtn svg{width:18px;height:18px}
+.need-tag{background:#F3D9A8;color:#5E3406}
+.tab.toggle#needf::before{background:#C96A12}
+.tab.toggle#needf[aria-pressed="true"]{background:#C96A12;border-color:#C96A12;color:#fff}
+.tab.toggle#needf[aria-pressed="true"]::before{background:#fff}
+.tab.toggle#favf::before{content:"\2665";width:auto;height:auto;background:none;border-radius:0;color:#D9446B;font-size:.95rem;line-height:1}
+.tab.toggle#favf[aria-pressed="true"]{background:#D9446B;border-color:#D9446B;color:#fff}
+.tab.toggle#favf[aria-pressed="true"] .n{color:#fff}
+.tab.toggle#favf[aria-pressed="true"]::before{color:#fff;background:none}
+.soon{margin:12px 0;color:var(--ink-soft);font-style:italic}
+.grp{font-weight:600;color:var(--marigold-deep);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+.ings li.grp{padding:16px 0 4px;border-bottom:0}
+h4.grp{margin:16px 0 10px}
+h4.grp:first-child{margin-top:4px}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;
+  background:#FCE5BC;color:var(--ink);font-weight:600;display:grid;place-items:center;
+}
+.notes{margin-top:28px;background:var(--butter);border-radius:16px;padding:18px 24px 16px}
+.notes h3{border-bottom:0;margin-bottom:6px;padding-bottom:0}
+.notes ul{margin:0;padding-left:20px}
+.notes li{margin:4px 0}
+
+@media (max-width:720px){
+  body{font-size:16px}
+  .leaves{width:150px;height:100px;opacity:.6}
+  .masthead{padding:30px 16px 8px}
+  .actions{width:100%;align-items:stretch}
+  .btnrow .btn{flex:1 1 0}
+  .tabs{padding:12px 16px 20px;flex-wrap:nowrap;overflow-x:auto}
+  .tab{flex:none}
+  .tablist{flex-wrap:nowrap}
+  .grid{columns:2;column-gap:12px;padding:0 14px 30px}
+  .cardwrap{margin-bottom:12px}
+  .card{border-radius:16px}
+  .card .cover{padding:6px 6px 0}
+  .badges{top:13px;left:13px;right:13px}
+  .card .body{padding:9px 12px 13px}
+  .card h2{font-size:1.04rem}
+  .kolam-line{padding:0 16px}
+  .foot,.empty{padding-left:16px;padding-right:16px}
+  .modal{padding:10px}
+  .sheet{padding:20px;border-radius:22px}
+  .hero{grid-template-columns:1fr;gap:18px}
+  .hero-cover svg{height:230px}
+  .hero-cover img{height:230px;object-fit:cover}
+  .hero h2{padding-right:0}
+  .cols{grid-template-columns:1fr;gap:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  .card,.tab,.fav{transition:none}
+  .card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="leaves" id="leaves" aria-hidden="true"></div>
+  <div class="masthead">
+    <div class="titles">
+      <h1>Moo-ruchi</h1>
+      <p class="tagline">Brought to you by your friendly neighborhood polar bear</p>
+    </div>
+    <div class="actions">
+      <div class="search">
+        <input id="q" type="search" placeholder="Search recipes" aria-label="Search recipes or ingredients" autocomplete="off">
+      </div>
+      <div class="btnrow">
+        <a class="btn" href="#request-recipe">Request a recipe</a>
+        <a class="btn primary" href="#add-recipe">Add a recipe</a>
+        <button class="btn" id="galbtn" type="button" aria-pressed="false" hidden>Gallery</button>
+      </div>
+    </div>
+  </div>
+  <div class="acct" id="acct"></div>
+  <div class="kolam-line" aria-hidden="true" id="kolam"></div>
+  <div class="tabs"><div class="tablist" id="tabs" role="tablist" aria-label="Recipe sections"></div><button class="tab toggle" id="gf" type="button" aria-pressed="false" hidden></button><button class="tab toggle" id="soonf" type="button" aria-pressed="false" hidden></button><button class="tab toggle" id="needf" type="button" aria-pressed="false" hidden></button><button class="tab toggle" id="favf" type="button" aria-pressed="false"></button></div>
+</header>
+
+<main>
+  <div class="grid" id="grid" role="tabpanel"></div>
+  <section class="gallery" id="gallery" hidden aria-label="Gallery"></section>
+  <section class="gallery" id="adminpage" hidden aria-label="Admin"></section>
+  <p class="empty" id="empty" hidden>No recipes match that search. Try a different word or section.</p>
+</main>
+<p class="foot" id="foot"></p>
+
+<div class="modal" id="modal" hidden>
+  <article class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Recipe"></article>
+</div>
+
+<script>
+/* ---------- the recipes live in the Supabase database (table: recipes) ---------- */
+let recipes = [];            /* loaded from the database after sign-in */
+let recipesLoaded = false;
+const photoSigned = {};        /* private photo paths -> short-lived signed URLs */
+
+/* ---------- small helpers ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let uid = 0;
+const seedOf = str => { let h = 7; for (const c of str) h = (h*31 + c.charCodeAt(0)) % 2147483647; return h || 1; };
+const rng = seed => () => { seed = (seed*16807) % 2147483647; return (seed-1)/2147483646; };
+const rad = d => d*Math.PI/180;
+
+/* ---------- illustration pieces ---------- */
+const PAL = {
+  lotus:{c:['#F8CBD6','#F0A3BA','#FFF2EE'],stroke:'rgba(190,80,115,.28)'},
+  marigold:{c:['#F9C873','#F3A83E','#FBD98E','#F6B84F'],stroke:'rgba(160,80,0,.2)'},
+  leaf:{c:['#8DB07A','#B3CDA0'],stroke:'rgba(50,80,45,.3)'}
+};
+function petal(cx,cy,len,w,ang,fill,stroke){
+  return `<path transform="rotate(${ang} ${cx} ${cy})" d="M${cx} ${cy} C${cx-w} ${cy-len*.35} ${cx-w*.6} ${cy-len*.85} ${cx} ${cy-len} C${cx+w*.6} ${cy-len*.85} ${cx+w} ${cy-len*.35} ${cx} ${cy} Z" fill="${fill}" stroke="${stroke}" stroke-width=".8"/>`;
+}
+function lotus(cx,cy,R,p){
+  let s='';
+  [[12,1,.2,p.c[0],0],[12,.8,.18,p.c[1],15],[8,.58,.16,p.c[2],0]].forEach(([n,l,w,f,off])=>{
+    for(let i=0;i<n;i++) s+=petal(cx,cy,R*l,R*w,off+i*360/n,f,p.stroke);
+  });
+  return s + `<circle cx="${cx}" cy="${cy}" r="${R*.1}" fill="#F2C45A"/>`;
+}
+function marigold(cx,cy,R,p){
+  let s='';
+  [[18,.8,.17,.25,p.c[0],0],[16,.6,.16,.22,p.c[1],11],[12,.4,.14,.19,p.c[2],0],[8,.22,.12,.16,p.c[3],20]].forEach(([n,d,rx,ry,f,off])=>{
+    for(let i=0;i<n;i++) s+=`<ellipse cx="${cx}" cy="${cy-R*d}" rx="${R*rx}" ry="${R*ry}" fill="${f}" stroke="${p.stroke}" transform="rotate(${off+i*360/n} ${cx} ${cy})"/>`;
+  });
+  return s + `<circle cx="${cx}" cy="${cy}" r="${R*.1}" fill="#C96A12"/>`;
+}
+function leaves(cx,cy,R,p){
+  let s='';
+  [[10,1,.22,p.c[0],0],[10,.82,.2,p.c[1],18]].forEach(([n,l,w,f,off])=>{
+    for(let i=0;i<n;i++){
+      const len=R*l, wd=R*w;
+      s+=`<g transform="rotate(${off+i*360/n} ${cx} ${cy})"><path d="M${cx} ${cy} Q${cx+wd} ${cy-len*.5} ${cx} ${cy-len} Q${cx-wd} ${cy-len*.5} ${cx} ${cy} Z" fill="${f}" stroke="${p.stroke}" stroke-width=".8"/><path d="M${cx} ${cy-R*.1} L${cx} ${cy-len*.9}" stroke="rgba(255,255,255,.75)" stroke-width="1.1"/></g>`;
+    }
+  });
+  return s;
+}
+function flower(x,y,r){
+  let s='';
+  for(let i=0;i<8;i++){
+    const a=rad(i*45);
+    s+=`<circle cx="${x+Math.cos(a)*r*.62}" cy="${y+Math.sin(a)*r*.62}" r="${r*.38}" fill="#F3A83E"/>`;
+  }
+  for(let i=0;i<8;i++){
+    const a=rad(i*45+22);
+    s+=`<circle cx="${x+Math.cos(a)*r*.36}" cy="${y+Math.sin(a)*r*.36}" r="${r*.26}" fill="#F9C873"/>`;
+  }
+  return s+`<circle cx="${x}" cy="${y}" r="${r*.2}" fill="#C96A12"/>`;
+}
+function bowl(x,y,r,fill,gar,rand,dots){
+  let s=`<circle cx="${x}" cy="${y}" r="${r}" fill="#CFA860"/><circle cx="${x}" cy="${y}" r="${r*.86}" fill="#EBD8A6"/><circle cx="${x}" cy="${y}" r="${r*.7}" fill="${fill}"/>`;
+  s+=`<circle cx="${x-r*.22}" cy="${y-r*.24}" r="${r*.2}" fill="#fff" fill-opacity=".3"/>`;
+  for(let k=0;k<dots;k++){
+    const a=rand()*6.283, d=rand()*r*.52;
+    s+=`<circle cx="${x+Math.cos(a)*d}" cy="${y+Math.sin(a)*d}" r="${1.4+rand()*1.4}" fill="${gar}"/>`;
+  }
+  return s;
+}
+
+/* ---------- cover: a plate (or a cup) inside a soft ring of flowers on a pale ground ---------- */
+function cover(r, par, card){
+  if(r.photo){
+    const st = (card && r.ar) ? ` style="aspect-ratio:${r.ar};object-fit:cover${r.pos ? ';object-position:' + r.pos : ''}"` : '';
+    return `<img src="${esc(photoSigned[r.photo] || '')}" width="${r.pw}" height="${r.ph}" alt="${esc(r.title)}" loading="lazy"${st}>`;
+  }
+  const W=300, H=r.h, cx=W/2, cy=H/2, R=Math.min(W,H)*.4, P=R*.62;
+  const u=++uid, rand=rng(seedOf(r.id)), pal=PAL[r.ring];
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="${par||'xMidYMid slice'}" role="img" aria-label="Illustration for ${esc(r.title)}">`;
+  s+=`<defs><radialGradient id="glow${u}" cx="50%" cy="50%" r="62%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>`;
+  s+=`<rect width="${W}" height="${H}" fill="${r.bg}"/><rect width="${W}" height="${H}" fill="url(#glow${u})"/>`;
+  const pc=['#F6C3CF','#F9C873','#fff'];
+  for(let i=0;i<22;i++){
+    const x=16+rand()*(W-32), y=16+rand()*(H-32);
+    if(Math.hypot(x-cx,y-cy)<R*1.08) continue;
+    s+=`<ellipse cx="${x}" cy="${y}" rx="${2.6+rand()*2.6}" ry="${5+rand()*4}" fill="${pc[i%3]}" opacity=".85" transform="rotate(${rand()*180} ${x} ${y})"/>`;
+  }
+  if(r.ring==='lotus') s+=lotus(cx,cy,R,pal);
+  else if(r.ring==='leaf') s+=leaves(cx,cy,R,pal);
+  else s+=marigold(cx,cy,R,pal);
+  s+=`<circle cx="${cx+2}" cy="${cy+6}" r="${P}" fill="rgba(110,70,25,.2)"/>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${P}" fill="#FFFDF8" stroke="#D9C28E" stroke-width="2"/>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${P*.9}" fill="#FBF3E0" stroke="#EADBB5" stroke-width="1.2"/>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${P*.95}" fill="none" stroke="#D9C28E" stroke-dasharray="1 4"/>`;
+  if(r.vessel==='cup'){
+    s+=`<ellipse cx="${cx+P*.6}" cy="${cy}" rx="${P*.2}" ry="${P*.14}" fill="none" stroke="#E4D5B3" stroke-width="7"/>`;
+    s+=`<circle cx="${cx-P*.05}" cy="${cy}" r="${P*.6}" fill="#FFFFFF" stroke="#E4D5B3" stroke-width="2"/>`;
+    s+=`<circle cx="${cx-P*.05}" cy="${cy}" r="${P*.5}" fill="#F3ECD9"/>`;
+    s+=`<circle cx="${cx-P*.05}" cy="${cy}" r="${P*.44}" fill="${r.dish}"/>`;
+    s+=`<circle cx="${cx-P*.2}" cy="${cy-P*.16}" r="${P*.12}" fill="#fff" fill-opacity=".3"/>`;
+    [[-.78,.12],[-.72,-.3],[-.55,.52]].forEach(([dx,dy])=>{ s+=`<ellipse cx="${cx+P*dx}" cy="${cy+P*dy}" rx="5" ry="3" fill="#8DB07A" transform="rotate(${dx*60} ${cx+P*dx} ${cy+P*dy})"/>`; });
+    s+=`<rect x="${cx+P*.1}" y="${cy+P*.62}" width="${P*.55}" height="5" rx="2.5" fill="#B9794A" transform="rotate(-12 ${cx+P*.4} ${cy+P*.64})"/>`;
+  } else {
+    const side=r.sides||[];
+    [210,330,90].forEach((deg,i)=>{
+      if(side[i]) s+=bowl(cx+Math.cos(rad(deg))*P*.66, cy+Math.sin(rad(deg))*P*.66, P*.2, side[i], '#fff', rand, 3);
+    });
+    s+=bowl(cx,cy,P*.4,r.dish,r.gar,rand,9);
+  }
+  return s+'</svg>';
+}
+
+/* ---------- decorative pieces ---------- */
+function garland(x1,x2,y0,sag,step,r){
+  let s=`<path d="M${x1} ${y0} Q${(x1+x2)/2} ${y0+sag*2} ${x2} ${y0}" fill="none" stroke="#E2C58F" stroke-width="1.6"/>`;
+  const n=Math.round((x2-x1)/step);
+  for(let i=0;i<=n;i++){
+    const u=i/n, x=x1+(x2-x1)*u, y=y0+sag*2*u*(1-u)*1.0;
+    s+=flower(x,y+2,r);
+  }
+  return s;
+}
+function strand(x,len){
+  let s=`<path d="M${x} -50 L${x} ${len}" stroke="#E2C58F" stroke-width="1.4"/>`;
+  for(let y=-38;y<len-6;y+=14) s+=flower(x,y,5.5);
+  return s+flower(x,len,8);
+}
+function palm(x,y){
+  let s=`<path d="M${x} ${y} C${x-5} ${y-40} ${x+5} ${y-80} ${x+22} ${y-118} L${x+31} ${y-114} C${x+16} ${y-78} ${x+9} ${y-40} ${x+14} ${y}Z" fill="#E3C79F"/>`;
+  for(let k=1;k<7;k++){ const yy=y-k*16; s+=`<path d="M${x+2+k*2.2} ${yy} l9 -2" stroke="#C9A67A" stroke-width="1.2" opacity=".7"/>`; }
+  const cx=x+27, cy=y-118;
+  [20,-15,-50,-90,-130,-165,160].forEach((ang,i)=>{
+    const f=i%2?'#8DB07A':'#A8C796';
+    s+=`<g transform="translate(${cx} ${cy}) rotate(${ang}) scale(.95)"><path d="M0 0 C22 -28 64 -32 96 -4 C64 -18 26 -12 0 0Z" fill="${f}" stroke="rgba(50,80,45,.25)" stroke-width=".8"/><path d="M2 -2 C30 -16 62 -16 90 -5" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g>`;
+  });
+  [[-5,6],[5,9],[0,14]].forEach(([dx,dy])=>{ s+=`<circle cx="${cx+dx}" cy="${cy+dy}" r="5.5" fill="#C9A06A" stroke="#A67C48" stroke-width=".8"/>`; });
+  return s;
+}
+function cowBust(x,y){
+  let s=`<ellipse cx="${x}" cy="${y+66}" rx="54" ry="34" fill="#FFFDF8" stroke="#E4D5B3" stroke-width="2"/>`;
+  s+=`<ellipse cx="${x+22}" cy="${y+62}" rx="16" ry="12" fill="#E8C9A8" opacity=".9"/>`;
+  [[-1],[1]].forEach(([d])=>{
+    s+=`<path d="M${x+d*16} ${y-33} C${x+d*20} ${y-52} ${x+d*34} ${y-52} ${x+d*39} ${y-45}" fill="none" stroke="#E2C77D" stroke-width="6" stroke-linecap="round"/>`;
+    s+=`<ellipse cx="${x+d*40}" cy="${y-14}" rx="17" ry="9" fill="#F6D9C8" stroke="#E4D5B3" stroke-width="1.5" transform="rotate(${d*20} ${x+d*40} ${y-14})"/>`;
+    s+=`<ellipse cx="${x+d*40}" cy="${y-14}" rx="10" ry="5" fill="#F4B6C8" transform="rotate(${d*20} ${x+d*40} ${y-14})"/>`;
+  });
+  s+=`<ellipse cx="${x}" cy="${y}" rx="31" ry="36" fill="#FFFDF8" stroke="#E4D5B3" stroke-width="2"/>`;
+  s+=`<path d="M${x-31} ${y-6} C${x-31} ${y-30} ${x-14} ${y-38} ${x-4} ${y-35} C${x-12} ${y-20} ${x-14} ${y-6} ${x-31} ${y-6}Z" fill="#E8C9A8"/>`;
+  [[-1],[1]].forEach(([d])=>{ s+=`<circle cx="${x+d*13}" cy="${y-6}" r="3.3" fill="#3A2A20"/><circle cx="${x+d*13+1}" cy="${y-7}" r="1" fill="#fff"/>`; });
+  s+=`<ellipse cx="${x}" cy="${y+16}" rx="21" ry="14" fill="#F8CBD6"/>`;
+  s+=`<circle cx="${x-7}" cy="${y+16}" r="2.6" fill="#C9718C"/><circle cx="${x+7}" cy="${y+16}" r="2.6" fill="#C9718C"/>`;
+  s+=`<circle cx="${x}" cy="${y-22}" r="3.2" fill="#D9446B"/>`;
+  s+=garland(x-40,x+40,y+40,8,12,6.5);
+  return s;
+}
+function bearBust(x,y){
+  let s=`<ellipse cx="${x}" cy="${y+66}" rx="50" ry="34" fill="#FFFFFF" stroke="#E4D5B3" stroke-width="2"/>`;
+  [[-1],[1]].forEach(([d])=>{
+    s+=`<circle cx="${x+d*25}" cy="${y-25}" r="11" fill="#FFFFFF" stroke="#E4D5B3" stroke-width="1.8"/><circle cx="${x+d*25}" cy="${y-25}" r="5.5" fill="#F8CBD6"/>`;
+  });
+  s+=`<circle cx="${x}" cy="${y}" r="33" fill="#FFFFFF" stroke="#E4D5B3" stroke-width="2"/>`;
+  s+=`<ellipse cx="${x}" cy="${y+11}" rx="16" ry="12" fill="#FBEFE6"/>`;
+  s+=`<ellipse cx="${x}" cy="${y+4}" rx="6.5" ry="4.5" fill="#3A2A20"/>`;
+  s+=`<path d="M${x} ${y+8} L${x} ${y+13} M${x-7} ${y+16} Q${x} ${y+21} ${x+7} ${y+16}" fill="none" stroke="#3A2A20" stroke-width="1.6" stroke-linecap="round"/>`;
+  [[-1],[1]].forEach(([d])=>{ s+=`<circle cx="${x+d*13}" cy="${y-7}" r="3.1" fill="#3A2A20"/><circle cx="${x+d*13+1}" cy="${y-8}" r="1" fill="#fff"/><circle cx="${x+d*22}" cy="${y+9}" r="5" fill="#F8CBD6" opacity=".6"/>`; });
+  s+=flower(x+17,y-33,9);
+  s+=garland(x-38,x+38,y+40,8,12,6.5);
+  return s;
+}
+function sceneSvg(){
+  const blades=[[-72,.8],[-56,.95],[-40,1],[-24,.9],[-9,.78]];
+  let leaf='';
+  blades.forEach(([a,k],i)=>{
+    const L=190*k, w=26*k;
+    let veins='';
+    for(let t=.12;t<.95;t+=.07){
+      const y=-L*t, h=w*.95*Math.sin(Math.PI*t)*.9;
+      veins+=`<path d="M0 ${y} L${h} ${y-h*.55} M0 ${y} L${-h} ${y-h*.55}" stroke="#fff" stroke-opacity=".38" stroke-width=".9" fill="none"/>`;
+    }
+    leaf+=`<g transform="translate(335 235) rotate(${a})" opacity="${.78+i*.03}"><path d="M0 0 C${w} ${-L*.3} ${w*1.1} ${-L*.75} 0 ${-L} C${-w*1.1} ${-L*.75} ${-w} ${-L*.3} 0 0Z" fill="url(#bl)"/><path d="M0 0 L0 ${-L*.97}" stroke="#fff" stroke-opacity=".6" stroke-width="1.4"/>${veins}</g>`;
+  });
+  [[250,200,30],[275,214,-20],[210,225,60],[300,170,10]].forEach(([x,y,a])=>{ leaf+=`<ellipse cx="${x}" cy="${y}" rx="4" ry="8" fill="#F6C3CF" opacity=".9" transform="rotate(${a} ${x} ${y})"/>`; });
+  let ex='';
+  ex+=`<circle cx="330" cy="70" r="90" fill="#F8CBD6" opacity=".35" filter="url(#wash)"/>`;
+  ex+=strand(372,64)+strand(496,98)+strand(300,44);
+  ex+=palm(212,236);
+  [[196,40,9],[168,96,7],[262,22,6]].forEach(([x,y,r])=>{ ex+=flower(x,y,r); });
+  [[184,70,25],[240,60,-30],[150,150,50]].forEach(([x,y,a])=>{ ex+=`<ellipse cx="${x}" cy="${y}" rx="3.6" ry="7.5" fill="#F6C3CF" opacity=".9" transform="rotate(${a} ${x} ${y})"/>`; });
+  ex+=cowBust(428,168);
+  ex+=bearBust(566,176);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" preserveAspectRatio="xMaxYMin slice">
+  <defs>
+    <clipPath id="ground"><rect x="0" y="-60" width="760" height="296"/></clipPath>
+    <filter id="wash" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+    <linearGradient id="bl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7FA66F"/><stop offset="1" stop-color="#B9D1A5"/></linearGradient>
+  </defs>
+  <g transform="translate(400 50)"><circle cx="290" cy="110" r="105" fill="#F9D6A8" opacity=".6" filter="url(#wash)"/><circle cx="190" cy="40" r="60" fill="#F8CBD6" opacity=".5" filter="url(#wash)"/>${leaf.replace(/translate\(335 235\)/g,'translate(335 235)')}</g>
+  <g class="extra" transform="translate(0 50)" clip-path="url(#ground)">${ex}</g>
+  </svg>`;
+}
+function kolamSvg(){
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="12">
+  <defs><pattern id="kol" width="44" height="12" patternUnits="userSpaceOnUse">
+    <path d="M22 1.5 L28.5 6 L22 10.5 L15.5 6 Z" fill="none" stroke="#E2C58F" stroke-width="1.1"/>
+    <circle cx="22" cy="6" r="1.5" fill="#F4A93D"/>
+    <circle cx="5" cy="6" r="1.3" fill="#E2C58F"/><circle cx="39" cy="6" r="1.3" fill="#E2C58F"/>
+  </pattern></defs><rect width="100%" height="12" fill="url(#kol)"/></svg>`;
+}
+function miniFlower(){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">${flower(12,12,10)}</svg>`;
+}
+
+/* ---------- tags ---------- */
+const isSoon = r => !r.ingredients.length && !r.steps.length && !r.table;
+const tableHtml = t => `<section class="ref-sec"><h3>${miniFlower()}${esc(t.title)}</h3><div class="tbl-wrap"><table class="ref"><thead><tr>${t.head.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(row => `<tr>${row.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`;
+const isNeeds = r => !!r.needs && !isSoon(r);
+const tagsOf = r => [...(r.tags || []), ...(isNeeds(r) ? ['Needs more'] : []), ...(isSoon(r) ? ['Coming soon'] : [])];
+const tagClass = x => x === 'Coming soon' ? 'soon-tag' : x === 'Needs more' ? 'need-tag' : x === 'Gluten free' ? 'gf-tag' : 'plain-tag';
+const tagHtml = x => `<span class="badge ${tagClass(x)}">${esc(x)}</span>`;
+const badges = r => tagsOf(r).length ? `<div class="badges">${tagsOf(r).map(tagHtml).join('')}</div>` : '';
+
+/* ---------- favorites (saved on this device only) ---------- */
+const FAV_KEY = 'moo-ruchi-favorites';
+let favs = new Set();
+try{ favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); }catch(e){}
+const saveFavs = () => { try{ localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); }catch(e){} };
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+const favLabel = r => (favs.has(r.id) ? 'Remove ' : 'Save ') + r.title + (favs.has(r.id) ? ' from favorites' : ' to favorites');
+
+/* ---------- page ---------- */
+const $ = id => document.getElementById(id);
+let cats = [];
+let activeCat = 'All', query = '', gfOnly = false, soonOnly = false, needOnly = false, favOnly = false, lastFocus = null, lastY = 0;
+
+$('leaves').innerHTML = sceneSvg();
+$('kolam').innerHTML = kolamSvg();
+
+function renderTabs(){
+  const all = ['All', ...cats];
+  $('tabs').innerHTML = all.map(c => {
+    const n = c==='All' ? recipes.length : recipes.filter(r => r.cat===c).length;
+    return `<button class="tab" role="tab" type="button" data-cat="${esc(c)}" aria-selected="${view==='cook' && c===activeCat}">${esc(c)} <span class="n">${n}</span></button>`;
+  }).join('');
+}
+function renderGf(){
+  const n = recipes.filter(r => (r.tags||[]).includes('Gluten free')).length;
+  const b = $('gf');
+  b.hidden = n === 0;
+  b.innerHTML = `Gluten free <span class="n">${n}</span>`;
+  b.setAttribute('aria-pressed', String(gfOnly));
+}
+function renderSoon(){
+  const n = recipes.filter(isSoon).length;
+  const b = $('soonf');
+  b.hidden = n === 0;
+  b.innerHTML = `Coming soon <span class="n">${n}</span>`;
+  b.setAttribute('aria-pressed', String(soonOnly));
+  if(n === 0) soonOnly = false;
+}
+function renderNeeds(){
+  const n = recipes.filter(isNeeds).length;
+  const b = $('needf');
+  b.hidden = n === 0;
+  b.innerHTML = `Needs more <span class="n">${n}</span>`;
+  b.setAttribute('aria-pressed', String(needOnly));
+  if(n === 0) needOnly = false;
+}
+function renderFavPill(){
+  const n = recipes.filter(r => favs.has(r.id)).length;
+  const b = $('favf');
+  b.innerHTML = `Favorites <span class="n">${n}</span>`;
+  b.setAttribute('aria-pressed', String(favOnly));
+}
+function matches(r){
+  if(activeCat!=='All' && r.cat!==activeCat) return false;
+  if(gfOnly && !(r.tags||[]).includes('Gluten free')) return false;
+  if(soonOnly && !isSoon(r)) return false;
+  if(needOnly && !isNeeds(r)) return false;
+  if(favOnly && !favs.has(r.id)) return false;
+  if(!query) return true;
+  const hay = (r.title+' '+r.cat+' '+(r.tags||[]).join(' ')+' '+r.ingredients.join(' ')).toLowerCase();
+  return query.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+function renderGrid(){
+  const list = recipes.filter(matches);
+  $('grid').innerHTML = list.map(r => `
+    <div class="cardwrap">
+    <a class="card" href="#${esc(r.id)}" data-id="${esc(r.id)}">
+      <div class="cover">${cover(r, undefined, true)}${badges(r)}</div>
+      <div class="body">
+        <div class="cat">${esc(r.cat)}</div>
+        <h2>${esc(r.title)}</h2>
+        ${(r.time || r.serves || r.makes) ? `<div class="meta-line">${[r.time ? esc(r.time) : '', r.serves ? 'Serves ' + esc(r.serves) : '', r.makes ? 'Makes ' + esc(r.makes) : ''].filter(Boolean).join(' &middot; ')}</div>` : ''}
+      </div>
+    </a>
+    </div>`).join('');
+  $('empty').textContent = (favOnly && !favs.size) ? 'No favorites yet. Tap the heart on any recipe to save it here.' : 'No recipes match that search. Try a different word or section.';
+  $('empty').hidden = list.length>0;
+  $('foot').textContent = `${recipes.length} ${recipes.length===1?'recipe':'recipes'} in ${cats.length} ${cats.length===1?'section':'sections'}`;
+}
+
+$('tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if(!b) return;
+  activeCat = b.dataset.cat; setView('cook'); renderTabs(); renderGrid();
+});
+$('gf').addEventListener('click', () => { gfOnly = !gfOnly; renderGf(); renderGrid(); });
+$('needf').addEventListener('click', () => { needOnly = !needOnly; renderNeeds(); renderGrid(); });
+$('favf').addEventListener('click', () => { favOnly = !favOnly; renderFavPill(); renderGrid(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fav-id]'); if(!b) return;
+  e.preventDefault();
+  const id = b.dataset.favId, r = recipes.find(x => x.id === id); if(!r) return;
+  if(favs.has(id)) favs.delete(id); else favs.add(id);
+  saveFavs(); renderFavPill(); pushFav(id, favs.has(id));
+  document.querySelectorAll('[data-fav-id="' + id + '"]').forEach(el => {
+    el.setAttribute('aria-pressed', String(favs.has(id)));
+    if(el.classList.contains('fav')) el.setAttribute('aria-label', favLabel(r));
+    if(el.classList.contains('favbtn')) el.querySelector('span').textContent = favs.has(id) ? 'Saved to favorites' : 'Save to favorites';
+  });
+  if(favOnly) renderGrid();
+});
+$('soonf').addEventListener('click', () => { soonOnly = !soonOnly; renderSoon(); renderGrid(); });
+$('q').addEventListener('input', e => { query = e.target.value.trim(); renderGrid(); });
+
+/* ---------- request / add forms (sent by email through Web3Forms) ---------- */
+const WEB3FORMS_KEY = 'df4627f1-25c0-470e-85cd-b236420f89a2';
+const FORM_URL = 'https://api.web3forms.com/submit';
+const FORM_TAGS = ['Main','Side','Breakfast','Dessert','Gluten free','Vegetarian'];
+function formHtml(kind){
+  const add = kind === 'add';
+  const tags = FORM_TAGS.map((x,i) => `<label class="tagchip"><input type="checkbox" name="tag" value="${esc(x)}" id="tag${i}"><span>${esc(x)}</span></label>`).join('');
+  return `
+    <button class="close" id="close" type="button" aria-label="Close">&times;</button>
+    <h2>${add ? 'Add a recipe' : 'Request a recipe'}</h2>
+    <p class="lead">${add ? 'Share a family favorite. It goes straight to Sruti, who will add it to the cookbook.' : 'Tell us what you would love to see in the cookbook. Your request goes straight to Sruti.'}</p>
+    <form id="rform" novalidate>
+      <div class="field"><label for="f-recipe">Recipe name <span class="req">required</span></label><input type="text" id="f-recipe" name="recipe" autocomplete="off"></div>
+      ${add ? `
+      <div class="field"><label for="f-text">Recipe <span class="req">required</span></label><textarea class="tall" id="f-text" name="text" placeholder="List the ingredients, then the steps. Quantities, times and anything you do by eye are all welcome."></textarea></div>
+      <fieldset class="field"><legend>Tags <span class="opt">optional</span></legend><div class="tagrow">${tags}</div></fieldset>
+      <div class="field"><label for="f-more">Anything else <span class="opt">optional</span></label><textarea id="f-more" name="more" placeholder="Who it is from, serving size, cooking time, tips, a photo link"></textarea></div>
+      ` : `
+      <div class="field"><label for="f-specs">Specifications <span class="opt">optional</span></label><textarea id="f-specs" name="specs" placeholder="For example: vegetarian, less spicy, no onion or garlic, gluten free"></textarea></div>
+      `}
+      <div class="field"><label for="f-name">Your name <span class="opt">optional</span></label><input type="text" id="f-name" name="from" autocomplete="name"></div>
+      <input type="text" class="hp" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="err" id="ferr" role="alert" hidden></p>
+      <button class="btn primary" id="fsend" type="submit">${add ? 'Send recipe' : 'Send request'}</button>
+    </form>`;
+}
+function openForm(kind){
+  $('sheet').className = 'sheet formsheet';
+  $('sheet').setAttribute('aria-label', kind === 'add' ? 'Add a recipe' : 'Request a recipe');
+  $('sheet').innerHTML = formHtml(kind);
+  $('close').addEventListener('click', closeRecipe);
+  $('rform').addEventListener('submit', e => { e.preventDefault(); submitForm(kind); });
+  $('modal').hidden = false;
+  document.body.classList.add('locked');
+  $('modal').scrollTop = 0;
+  $('f-recipe').focus();
+}
+async function submitForm(kind){
+  const add = kind === 'add';
+  const val = id => ($(id) ? $(id).value.trim() : '');
+  const showErr = m => { $('ferr').textContent = m; $('ferr').hidden = false; };
+  $('ferr').hidden = true;
+  const recipe = val('f-recipe');
+  if(!recipe){ showErr('Please add a recipe name.'); $('f-recipe').focus(); return; }
+  if(add && !val('f-text')){ showErr('Please add the recipe, with ingredients and steps.'); $('f-text').focus(); return; }
+  if($('rform').elements['_honey'].value){ thanks(kind); return; }
+  const payload = {
+    _subject: `Moo-ruchi: ${add ? 'New recipe' : 'Recipe request'} - ${recipe}`,
+    _template: 'table',
+    _captcha: 'false',
+    Type: add ? 'Add a recipe' : 'Request a recipe',
+    'Recipe name': recipe
+  };
+  if(add){
+    payload['Recipe'] = val('f-text');
+    const tags = [...document.querySelectorAll('input[name="tag"]:checked')].map(x => x.value);
+    payload['Tags'] = tags.length ? tags.join(', ') : '(none selected)';
+    payload['Anything else'] = val('f-more') || '(nothing added)';
+  } else {
+    payload['Specifications'] = val('f-specs') || '(none given)';
+  }
+  payload['From'] = val('f-name') || '(name not given)';
+  if(WEB3FORMS_KEY){ payload.access_key = WEB3FORMS_KEY; payload.subject = payload._subject; if(val('f-name')) payload.from_name = val('f-name'); }
+  const btn = $('fsend'); const label = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try{
+    const res = await fetch(FORM_URL, { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if(!res.ok || data.success === 'false' || data.success === false || (WEB3FORMS_KEY && data.success !== true)){
+      const e = new Error(data.message || ('HTTP ' + res.status)); e.fromService = true; throw e;
+    }
+    thanks(kind);
+  }catch(err){
+    btn.disabled = false; btn.textContent = label;
+    if(err.fromService && /activat/i.test(err.message)){
+      showErr('Almost ready: the email service needs a one-time confirmation from Sruti. Please try again in a little while. Your answers are still here.');
+    } else if(err.fromService){
+      showErr('The email service said: ' + err.message + ' Your answers are still here.');
+    } else {
+      showErr('That did not go through. Please check your connection and try again, and turn off any ad blocker for this page. If it keeps failing, please try again later. Your answers are still here.');
+    }
+    console.error('Form send failed:', err);
+  }
+}
+function thanks(kind){
+  $('sheet').innerHTML = `
+    <button class="close" id="close" type="button" aria-label="Close">&times;</button>
+    <div class="thanks">
+      <h2>Thank you!</h2>
+      <p>${kind === 'add' ? 'Your recipe is on its way to Sruti. It will show up in the cookbook once she has added it.' : 'Your request is on its way to Sruti. Watch the cookbook for the new recipe.'}</p>
+      <button class="btn primary" id="done" type="button">Back to the cookbook</button>
+    </div>`;
+  $('close').addEventListener('click', closeRecipe);
+  $('done').addEventListener('click', closeRecipe);
+  $('done').focus();
+}
+
+
+/* ---------- gallery (photos and captions from the family, stored in Supabase) ---------- */
+const SUPABASE_URL = 'https://amoccwqexfekwhbolyvb.supabase.co';       /* e.g. https://abcd1234.supabase.co  (see supabase/setup.sql) */
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtb2Njd3FleGZla3doYm9seXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1Mjc2MzgsImV4cCI6MjExMTEwMzYzOH0.mUQIHG8jvS4l6AgZ8KWTuGcOLU8fWdsefVEtpWky0Iw';  /* the public "anon" key; safe to publish, access is limited by database rules */
+const GALLERY_ON = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+const SB = SUPABASE_URL.replace(/\/$/, '');
+const SESSION_KEY = 'moo-ruchi-session';
+let view = 'cook', session = null, isAdmin = false, posts = null, galErr = '';
+try{ session = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }catch(e){ session = null; }
+
+function saveSession(s){
+  const prev = session;
+  session = s;
+  try{ s ? localStorage.setItem(SESSION_KEY, JSON.stringify(s)) : localStorage.removeItem(SESSION_KEY); }catch(e){}
+  if(s){
+    if(document.body.classList.contains('gated')) ungate();
+    if(!prev || prev.user.id !== s.user.id){ syncFavs(); loadRecipes(); }
+  } else {
+    favs = new Set(); saveFavs();
+    recipes = []; cats = []; recipesLoaded = false;
+    renderTabs(); renderFavPill(); renderGrid();
+    applyGate();
+  }
+}
+/* everyone creates an account before using the cookbook */
+let gateMode = false;
+const gated = () => GALLERY_ON && !session;
+function applyGate(){
+  if(!gated()) return;
+  let seen = false; try{ seen = !!localStorage.getItem('moo-ruchi-seen'); }catch(e){}
+  document.body.classList.add('gated');
+  if(!gateMode){ authMode = seen ? 'in' : 'up'; }
+  gateMode = true; openAuth();
+}
+function ungate(){
+  gateMode = false;
+  document.body.classList.remove('gated');
+  try{ localStorage.setItem('moo-ruchi-seen', '1'); }catch(e){}
+  hideRecipe();
+}
+/* recipes are loaded from the database, only for signed-in people */
+async function loadRecipes(){
+  if(!session) return;
+  if(!recipesLoaded){ $('grid').innerHTML = '<p class="gal-msg">Loading recipes...</p>'; $('empty').hidden = true; }
+  let failed = false;
+  try{
+    const rows = await sb('/rest/v1/recipes?select=id,sort,data&order=sort.asc') || [];
+    recipes = rows.map(r => Object.assign({ id: r.id }, r.data));
+    cats = [...new Set(recipes.map(r => r.cat))];
+    const paths = [...new Set(recipes.map(r => r.photo).filter(Boolean))];
+    if(paths.length){
+      const signed = await sb('/storage/v1/object/sign/recipe-photos', jsonOpts('POST', { expiresIn: 6 * 3600, paths })) || [];
+      signed.forEach(x => { if(x.signedURL) photoSigned[x.path] = SB + '/storage/v1' + x.signedURL; });
+    }
+    recipesLoaded = true;
+  }catch(e){ console.error('Could not load recipes', e); failed = true; }
+  renderTabs(); renderGf(); renderSoon(); renderNeeds(); renderFavPill(); renderGrid();
+  if(failed && !recipes.length){ $('grid').innerHTML = '<p class="gal-msg">The recipes could not load right now. Please refresh the page in a little while.</p>'; }
+  route();
+}
+/* favorites live in the person's account */
+const FAV_MIGRATED = 'moo-ruchi-favs-migrated';
+async function syncFavs(){
+  if(!session) return;
+  try{
+    const rows = await sb('/rest/v1/favorites?select=recipe_id') || [];
+    const server = new Set(rows.map(r => r.recipe_id));
+    let migrated = false; try{ migrated = !!localStorage.getItem(FAV_MIGRATED); }catch(e){}
+    if(!migrated){
+      const extra = [...favs].filter(id => !server.has(id));
+      if(extra.length) await sb('/rest/v1/favorites', jsonOpts('POST', extra.map(recipe_id => ({ recipe_id })), { Prefer:'resolution=ignore-duplicates,return=minimal' }));
+      extra.forEach(id => server.add(id));
+      try{ localStorage.setItem(FAV_MIGRATED, '1'); }catch(e){}
+    }
+    favs = server; saveFavs(); renderFavPill(); renderGrid();
+    const r = recipes.find(x => x.id === location.hash.slice(1)); if(r && !$('modal').hidden) openRecipe(r);
+  }catch(e){ console.error('Could not sync favorites', e); }
+}
+function pushFav(id, on){
+  if(!session) return;
+  (on
+    ? sb('/rest/v1/favorites', jsonOpts('POST', { recipe_id: id }, { Prefer:'resolution=ignore-duplicates,return=minimal' }))
+    : sb('/rest/v1/favorites?recipe_id=eq.' + encodeURIComponent(id), { method:'DELETE' })
+  ).catch(e => console.error('Could not save favorite', e));
+}
+function toSession(d){
+  if(!d || !d.access_token) return null;
+  return { access_token:d.access_token, refresh_token:d.refresh_token,
+    expires_at: d.expires_at || (Math.floor(Date.now()/1000) + (d.expires_in || 3600)),
+    user: { id: d.user.id, name: (d.user.user_metadata && d.user.user_metadata.name) || '' } };
+}
+async function sb(path, opts){
+  opts = opts || {};
+  if(session && opts.auth !== false && session.expires_at - 60 < Date.now()/1000){
+    const r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method:'POST', headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body: JSON.stringify({refresh_token: session.refresh_token}) });
+    if(r.ok){ saveSession(toSession(await r.json())); } else { saveSession(null); isAdmin = false; }
+  }
+  const headers = Object.assign({ apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + ((opts.auth !== false && session) ? session.access_token : SUPABASE_ANON_KEY) }, opts.headers || {});
+  const res = await fetch(SB + path, { method: opts.method || 'GET', headers, body: opts.body });
+  if(!res.ok){
+    const d = await res.json().catch(() => ({}));
+    const e = new Error(d.msg || d.message || d.error_description || d.error || ('HTTP ' + res.status)); e.status = res.status; throw e;
+  }
+  return res.status === 204 ? null : res.json().catch(() => null);
+}
+const jsonOpts = (method, obj, extra) => ({ method, headers: Object.assign({'Content-Type':'application/json'}, extra || {}), body: JSON.stringify(obj) });
+async function checkAdmin(){
+  isAdmin = false;
+  if(session){
+    try{ const r = await sb('/rest/v1/admins?select=user_id&user_id=eq.' + session.user.id); isAdmin = !!(r && r.length); }catch(e){}
+  }
+  adminReady = true;
+  renderAcct(); if(view === 'admin') renderAdmin(); if(view === 'gallery') renderGallery();
+}
+async function loadPosts(){
+  galErr = '';
+  try{ posts = await sb('/rest/v1/gallery_posts?select=*&order=created_at.desc&limit=120') || []; }
+  catch(e){ galErr = 'The gallery could not load right now. Please try again in a little while.'; console.error(e); posts = posts || []; }
+  renderGallery();
+}
+const DELETE_WINDOW_MS = 5 * 60 * 1000;
+const pathsOf = p => (p.image_paths && p.image_paths.length) ? p.image_paths : [p.image_path];
+const urlOf = path => SB + '/storage/v1/object/public/gallery/' + path.split('/').map(encodeURIComponent).join('/');
+const MAX_PHOTOS = 5;
+function carouselHtml(p, big){
+  const ps = pathsOf(p), alt = p.caption || 'Dish shared by ' + p.author_name, many = ps.length > 1;
+  return `<div class="car${big ? ' big' : ''}${many ? ' many' : ''}" data-car>
+    <div class="track" tabindex="${many ? 0 : -1}" ${many ? 'role="group" aria-roledescription="carousel" aria-label="Photos in this post"' : ''}>${ps.map((x, i) => big
+      ? `<div class="slide"><img src="${esc(urlOf(x))}" alt="${esc(alt)} (photo ${i + 1} of ${ps.length})"></div>`
+      : `<button class="slide ph" type="button" data-open="${esc(p.id)}" data-i="${i}" aria-label="View photo ${i + 1} larger"><img src="${esc(urlOf(x))}" alt="${esc(alt)}${many ? ` (photo ${i + 1} of ${ps.length})` : ''}" loading="lazy"></button>`).join('')}</div>
+    ${many ? `<button class="cnav prev" type="button" data-nav="-1" aria-label="Previous photo" hidden>&#8249;</button><button class="cnav next" type="button" data-nav="1" aria-label="Next photo">&#8250;</button><div class="dots" aria-hidden="true">${ps.map((_, i) => `<i${i === 0 ? ' class="on"' : ''}></i>`).join('')}</div>` : ''}
+  </div>`;
+}
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-nav]'); if(!n) return;
+  const t = n.closest('[data-car]').querySelector('.track');
+  t.scrollBy({ left: +n.dataset.nav * t.clientWidth, behavior: 'smooth' });
+});
+document.addEventListener('scroll', e => {
+  const t = e.target; if(!(t.classList && t.classList.contains('track'))) return;
+  const car = t.closest('[data-car]'), i = Math.round(t.scrollLeft / t.clientWidth), last = t.children.length - 1;
+  car.querySelectorAll('.dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+  const pv = car.querySelector('.prev'), nx = car.querySelector('.next');
+  if(pv) pv.hidden = i <= 0; if(nx) nx.hidden = i >= last;
+}, true);
+const fmtDate = d => new Date(d).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+function renderGallery(){
+  const g = $('gallery'); if(!GALLERY_ON) return;
+  const items = (posts || []).map(p => {
+    const canEdit = session && (isAdmin || p.user_id === session.user.id);
+    const mine = session && (isAdmin || (p.user_id === session.user.id && Date.now() - new Date(p.created_at).getTime() < DELETE_WINDOW_MS));
+    return `<figure class="gcard" style="margin-left:0;margin-right:0">
+      ${carouselHtml(p)}
+      <figcaption class="gb">${p.caption ? `<p class="cap">${esc(p.caption)}</p>` : ''}
+        <div class="by"><span>${esc(p.author_name)} &middot; ${esc(fmtDate(p.created_at))}</span>${canEdit ? `<span class="acts"><button class="edit" type="button" data-edit="${esc(p.id)}">Edit</button>${mine ? `<button class="del" type="button" data-del="${esc(p.id)}">Delete</button>` : ''}</span>` : ''}</div>
+      </figcaption></figure>`;
+  }).join('');
+  g.innerHTML = `
+    <div class="gal-head">
+      <div><h2>Gallery</h2><p>Dishes our hoomans have made. Share yours!</p></div>
+      <div class="gal-who"><a class="btn primary" href="#share-photo">Share a photo</a></div>
+    </div>
+    ${galErr ? `<p class="err" role="alert">${esc(galErr)}</p>` : ''}
+    ${posts === null ? '<p class="gal-msg">Loading photos...</p>' : (items ? `<div class="gal-grid">${items}</div>` : (galErr ? '' : '<p class="gal-msg">No photos yet. Be the first to share a dish you made!</p>'))}`;
+}
+function renderAcct(){
+  const a = $('acct'); if(!a) return;
+  if(!GALLERY_ON){ a.innerHTML = ''; return; }
+  a.innerHTML = session
+    ? `<span>Signed in as <b>${esc(session.user.name || 'you')}</b></span>${isAdmin ? '<a class="adminbadge" href="#admin" title="Open the admin page">Admin</a>' : ''}<button class="linkbtn" id="signout" type="button">Sign out</button>`
+    : '<a class="btn" href="#account">Sign in</a>';
+}
+$('acct').addEventListener('click', e => {
+  if(e.target.closest('#signout')){ saveSession(null); isAdmin = false; renderAcct(); if(view !== 'cook') setView('cook'); }
+});
+$('galbtn').addEventListener('click', () => setView(view === 'gallery' ? 'cook' : 'gallery'));
+
+function openEdit(id){
+  const p = posts.find(x => x.id === id); if(!p) return;
+  let order = pathsOf(p).slice();
+  const draw = () => {
+    $('ed-list').innerHTML = order.map((x, i) => `<li><img src="${esc(urlOf(x))}" alt="Photo ${i + 1}"><span class="lbl">${i === 0 ? 'Cover photo' : 'Photo ' + (i + 1)}</span><span class="mv"><button type="button" data-mv="${i}" data-d="-1" aria-label="Move photo ${i + 1} earlier"${i === 0 ? ' disabled' : ''}>&uarr;</button><button type="button" data-mv="${i}" data-d="1" aria-label="Move photo ${i + 1} later"${i === order.length - 1 ? ' disabled' : ''}>&darr;</button></span></li>`).join('');
+  };
+  $('sheet').className = 'sheet formsheet';
+  $('sheet').setAttribute('aria-label', 'Edit post');
+  $('sheet').innerHTML = `<button class="close" id="close" type="button" aria-label="Close">&times;</button>
+    <h2>Edit post</h2>
+    <p class="lead">${order.length > 1 ? 'Change the caption or reorder your photos. The first photo is the cover.' : 'Change the caption.'}</p>
+    <form id="eform" novalidate>
+      <div class="field"><label for="e-cap">Caption <span class="opt">up to 160 characters</span></label><input class="tx" type="text" id="e-cap" maxlength="160"></div>
+      ${order.length > 1 ? '<ul class="ed-list" id="ed-list"></ul>' : '<ul class="ed-list" id="ed-list" hidden></ul>'}
+      <p class="err" id="eerr" role="alert" hidden></p>
+      <button class="btn primary" id="esave" type="submit">Save changes</button>
+    </form>`;
+  $('e-cap').value = p.caption || '';
+  if(order.length > 1) draw();
+  $('close').addEventListener('click', () => hideRecipe());
+  $('ed-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-mv]'); if(!b) return;
+    const i = +b.dataset.mv, j = i + +b.dataset.d;
+    if(j < 0 || j >= order.length) return;
+    [order[i], order[j]] = [order[j], order[i]]; draw();
+    const nb = $('ed-list').querySelector(`[data-mv="${j}"][data-d="${b.dataset.d}"]`); if(nb && !nb.disabled) nb.focus();
+  });
+  $('eform').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('esave'); btn.disabled = true; btn.textContent = 'Saving...';
+    try{
+      const caption = $('e-cap').value.trim();
+      const res = await sb('/rest/v1/gallery_posts?id=eq.' + encodeURIComponent(p.id), jsonOpts('PATCH', { caption, image_paths: order }, { Prefer:'return=representation' }));
+      if(!res || !res.length) throw new Error('You do not have permission to edit this post.');
+      Object.assign(p, res[0]);
+      hideRecipe(); renderGallery();
+    }catch(er){ btn.disabled = false; btn.textContent = 'Save changes'; $('eerr').textContent = er.message; $('eerr').hidden = false; }
+  });
+  $('modal').hidden = false; document.body.classList.add('locked'); $('modal').scrollTop = 0; $('e-cap').focus();
+}
+function renderGallerySoon(){ setTimeout(() => { if(view === 'gallery') renderGallery(); }, 2500); }
+function setView(v){
+  if(v === true) v = 'gallery'; if(v === false) v = 'cook';
+  if(!GALLERY_ON) v = 'cook';
+  view = v;
+  document.body.classList.toggle('ingallery', v !== 'cook');
+  $('gallery').hidden = v !== 'gallery';
+  $('adminpage').hidden = v !== 'admin';
+  $('galbtn').setAttribute('aria-pressed', String(v === 'gallery'));
+  renderTabs(); renderAcct();
+  if(v === 'gallery'){
+    history.replaceState(null, '', '#gallery');
+    if(posts === null){ renderGallery(); loadPosts(); } else renderGallery();
+  } else if(v === 'admin'){
+    history.replaceState(null, '', '#admin'); renderAdmin();
+  } else if(location.hash === '#gallery' || location.hash === '#admin'){
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  window.scrollTo(0, 0);
+}
+$('gallery').addEventListener('click', async e => {
+  const o = e.target.closest('[data-open]');
+  if(o){
+    const p = posts.find(x => x.id === o.dataset.open); if(!p) return;
+    lastFocus = o;
+    $('sheet').className = 'sheet formsheet';
+    $('sheet').setAttribute('aria-label', 'Photo');
+    $('sheet').innerHTML = `<button class="close" id="close" type="button" aria-label="Close">&times;</button>
+      ${carouselHtml(p, true)}
+      ${p.caption ? `<p class="bigcap">${esc(p.caption)}</p>` : ''}<p class="hint">${esc(p.author_name)} &middot; ${esc(fmtDate(p.created_at))}</p>`;
+    $('close').addEventListener('click', () => { hideRecipe(); });
+    $('modal').hidden = false; document.body.classList.add('locked'); $('modal').scrollTop = 0; $('close').focus();
+    const tr = $('sheet').querySelector('.track'), i0 = +o.dataset.i || 0;
+    if(i0){ tr.scrollLeft = i0 * tr.clientWidth; }
+    return;
+  }
+  const ed = e.target.closest('[data-edit]');
+  if(ed){ openEdit(ed.dataset.edit); return; }
+  const d = e.target.closest('[data-del]');
+  if(d){
+    if(!d.dataset.sure){ d.dataset.sure = '1'; d.textContent = 'Tap again to delete'; return; }
+    d.disabled = true; d.textContent = 'Deleting...';
+    const p = posts.find(x => x.id === d.dataset.del);
+    try{
+      const gone = await sb('/rest/v1/gallery_posts?id=eq.' + encodeURIComponent(p.id), { method:'DELETE', headers:{ Prefer:'return=representation' } });
+      if(!gone || !gone.length){ d.textContent = 'Can only delete within 5 min'; renderGallerySoon(); return; }
+      pathsOf(p).forEach(x => sb('/storage/v1/object/gallery/' + x.split('/').map(encodeURIComponent).join('/'), { method:'DELETE' }).catch(() => {}));
+      posts = posts.filter(x => x.id !== p.id); renderGallery();
+    }catch(err){ d.disabled = false; d.textContent = 'Could not delete'; console.error(err); }
+    return;
+  }
+});
+
+/* sign in / create account / share-a-photo forms */
+let authMode = 'in';
+function authHtml(){
+  const up = authMode === 'up';
+  return `
+    <button class="close" id="close" type="button" aria-label="Close">&times;</button>
+    <h2>${up ? 'Create an account' : 'Sign in'}</h2>
+    <p class="lead">${up ? 'An account lets you share photos to the gallery and delete your own.' : 'Sign in to share photos to the gallery.'}</p>
+    <form id="aform" novalidate>
+      ${up ? '<div class="field"><label for="a-name">Your name</label><input class="tx" type="text" id="a-name" autocomplete="given-name" maxlength="60"></div>' : ''}
+      <div class="field"><label for="a-email">Email</label><input class="tx" type="email" id="a-email" autocomplete="email"></div>
+      <div class="field"><label for="a-pass">Password${up ? ' <span class="opt">at least 6 characters</span>' : ''}</label><input class="tx" type="password" id="a-pass" autocomplete="${up ? 'new-password' : 'current-password'}"></div>
+      <p class="err" id="aerr" role="alert" hidden></p>
+      <p class="ok" id="aok" role="status" hidden></p>
+      <div class="btnrow"><button class="btn primary" id="asend" type="submit">${up ? 'Create account' : 'Sign in'}</button>
+      <button class="btn" id="aswitch" type="button">${up ? 'I already have an account' : 'Create an account'}</button></div>
+      ${up ? '' : '<p class="hint" style="margin-top:14px"><button class="linkbtn" id="aforgot" type="button">Forgot your password?</button></p>'}
+    </form>`;
+}
+function openAuth(){
+  $('sheet').className = 'sheet formsheet';
+  $('sheet').setAttribute('aria-label', 'Account');
+  $('sheet').innerHTML = authHtml();
+  if(gateMode){ $('close').remove(); const h = $('sheet').querySelector('h2'); h.textContent = authMode === 'up' ? 'Welcome to Moo-ruchi' : 'Welcome back'; h.style.paddingRight = '0'; $('sheet').querySelector('.lead').textContent = authMode === 'up' ? 'Please create an account to open the family cookbook. It only takes your name, an email and a password. Your favorites and photos stay with your account.' : 'Please sign in to open the family cookbook.'; }
+  else $('close').addEventListener('click', closeRecipe);
+  $('aswitch').addEventListener('click', () => { authMode = authMode === 'up' ? 'in' : 'up'; openAuth(); });
+  if($('aforgot')) $('aforgot').addEventListener('click', forgot);
+  $('aform').addEventListener('submit', e => { e.preventDefault(); submitAuth(); });
+  $('modal').hidden = false; document.body.classList.add('locked'); $('modal').scrollTop = 0;
+  (authMode === 'up' ? $('a-name') : $('a-email')).focus();
+}
+const aErr = m => { $('aok').hidden = true; $('aerr').textContent = m; $('aerr').hidden = false; };
+const aOk = m => { $('aerr').hidden = true; $('aok').textContent = m; $('aok').hidden = false; };
+async function forgot(){
+  const email = $('a-email').value.trim();
+  if(!email){ aErr('Type your email above first, then tap "Forgot your password?".'); $('a-email').focus(); return; }
+  try{ await sb('/auth/v1/recover', Object.assign(jsonOpts('POST', { email }), { auth:false })); aOk('If that email has an account, a reset link is on its way.'); }
+  catch(e){ aErr(e.message); }
+}
+async function submitAuth(){
+  const up = authMode === 'up';
+  const email = $('a-email').value.trim(), pass = $('a-pass').value, name = up ? $('a-name').value.trim() : '';
+  $('aerr').hidden = true; $('aok').hidden = true;
+  if(up && !name){ aErr('Please add your name.'); $('a-name').focus(); return; }
+  if(!email || !/^\S+@\S+\.\S+$/.test(email)){ aErr('Please enter a valid email.'); $('a-email').focus(); return; }
+  if(pass.length < 6){ aErr('Your password needs at least 6 characters.'); $('a-pass').focus(); return; }
+  const btn = $('asend'), label = btn.textContent; btn.disabled = true; btn.textContent = 'One moment...';
+  try{
+    let d;
+    if(up) d = await sb('/auth/v1/signup', Object.assign(jsonOpts('POST', { email, password: pass, data: { name } }), { auth:false }));
+    else d = await sb('/auth/v1/token?grant_type=password', Object.assign(jsonOpts('POST', { email, password: pass }), { auth:false }));
+    const s = toSession(d && d.access_token ? d : null);
+    if(!s){ btn.disabled = false; btn.textContent = label; aOk('Almost there! Please check your email and tap the confirmation link, then sign in.'); return; }
+    const wasGate = gateMode;
+    saveSession(s); await checkAdmin();
+    if(wasGate){ route(); return; }
+    if(location.hash === '#share-photo') openShare(); else if(location.hash === '#account') hideAndGo(); else location.hash = 'share-photo';
+  }catch(err){
+    btn.disabled = false; btn.textContent = label;
+    aErr(/invalid login/i.test(err.message) ? 'That email and password do not match. Please try again.' : err.message);
+  }
+}
+
+let adminReady = false;
+async function renderAdmin(){
+  const el = $('adminpage');
+  if(!session){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>Please sign in as an admin to see this page.</p></div></div>'; return; }
+  if(!adminReady){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2></div></div><p class="gal-msg">Loading...</p>'; return; }
+  if(!isAdmin){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>This page is for admins only.</p></div></div>'; return; }
+  el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>Everyone with an account. Admins can delete any gallery photo and manage roles.</p></div></div><div id="mlist"><p class="gal-msg">Loading members...</p></div>';
+  try{
+    const list = await sb('/rest/v1/rpc/list_members', jsonOpts('POST', {}));
+    $('mlist').innerHTML = `<h3 class="adm-h">Members <span class="n">${list.length}</span></h3><ul class="members">${list.map(m => `<li><div class="mi"><b>${esc(m.name || 'No name')}</b> ${m.is_admin ? '<span class="adminbadge">Admin</span>' : ''}<small>${esc(m.email)} &middot; joined ${esc(fmtDate(m.created_at))}</small></div>${m.id === session.user.id ? '<span class="hint">You</span>' : `<button class="btn" type="button" data-role="${esc(m.id)}" data-make="${!m.is_admin}">${m.is_admin ? 'Make regular user' : 'Make admin'}</button>`}</li>`).join('')}</ul><p class="err" id="merr" role="alert" hidden></p>`;
+  }catch(e){ $('mlist').innerHTML = '<p class="err">Could not load members: ' + esc(e.message) + '</p>'; }
+}
+$('adminpage').addEventListener('click', async e => {
+  const b = e.target.closest('[data-role]'); if(!b) return;
+  b.disabled = true;
+  try{ await sb('/rest/v1/rpc/set_admin', jsonOpts('POST', { target: b.dataset.role, make_admin: b.dataset.make === 'true' })); renderAdmin(); }
+  catch(er){ b.disabled = false; $('merr').textContent = er.message; $('merr').hidden = false; }
+});
+function hideAndGo(){ location.hash = ''; hideRecipe(); }
+async function resizeImage(file){
+  const bmp = await createImageBitmap(file);
+  const max = 1600, k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise((ok, no) => c.toBlob(b => b ? ok(b) : no(new Error('Could not read that photo.')), 'image/jpeg', 0.82));
+}
+function openShare(){
+  if(!session){ authMode = 'in'; openAuth(); return; }
+  $('sheet').className = 'sheet formsheet';
+  $('sheet').setAttribute('aria-label', 'Share a photo');
+  $('sheet').innerHTML = `
+    <button class="close" id="close" type="button" aria-label="Close">&times;</button>
+    <h2>Share photos</h2>
+    <p class="lead">Show off a dish you made. Add up to 5 photos to one post. You are posting as <b>${esc(session.user.name || 'you')}</b>.</p>
+    <form id="sform" novalidate>
+      <div class="field"><label for="s-file">Photos <span class="opt">up to 5</span></label><input type="file" id="s-file" accept="image/*" multiple></div>
+      <div class="pvrow" id="s-pv" aria-live="polite"></div>
+      <div class="field"><label for="s-cap">Caption <span class="opt">optional, up to 160 characters</span></label><input class="tx" type="text" id="s-cap" maxlength="160" placeholder="Pesarattu for Sunday breakfast"></div>
+      <p class="err" id="serr" role="alert" hidden></p>
+      <button class="btn primary" id="ssend" type="submit">Post to gallery</button>
+    </form>`;
+  $('close').addEventListener('click', closeRecipe);
+  $('s-file').addEventListener('change', () => {
+    const fs = [...$('s-file').files].slice(0, MAX_PHOTOS);
+    $('s-pv').innerHTML = fs.map((f, i) => `<img src="${URL.createObjectURL(f)}" alt="Preview of photo ${i + 1}">`).join('');
+    $('serr').hidden = true;
+    if($('s-file').files.length > MAX_PHOTOS){ $('serr').textContent = 'You can add up to 5 photos per post. Only the first 5 will be shared.'; $('serr').hidden = false; }
+  });
+  $('sform').addEventListener('submit', e => { e.preventDefault(); submitShare(); });
+  $('modal').hidden = false; document.body.classList.add('locked'); $('modal').scrollTop = 0;
+}
+async function submitShare(){
+  const err = m => { $('serr').textContent = m; $('serr').hidden = false; };
+  $('serr').hidden = true;
+  const files = [...$('s-file').files].slice(0, MAX_PHOTOS);
+  if(!files.length){ err('Please choose at least one photo.'); return; }
+  const btn = $('ssend'), label = btn.textContent; btn.disabled = true;
+  const uploaded = [];
+  try{
+    for(let i = 0; i < files.length; i++){
+      btn.textContent = files.length > 1 ? `Uploading ${i + 1} of ${files.length}...` : 'Posting...';
+      const blob = await resizeImage(files[i]);
+      const path = session.user.id + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7) + '.jpg';
+      await sb('/storage/v1/object/gallery/' + path, { method:'POST', headers:{'Content-Type':'image/jpeg'}, body: blob });
+      uploaded.push(path);
+    }
+    try{
+      await sb('/rest/v1/gallery_posts', jsonOpts('POST', { user_id: session.user.id, author_name: session.user.name || 'Family', caption: $('s-cap').value.trim(), image_path: uploaded[0], image_paths: uploaded }, { Prefer:'return=minimal' }));
+    }catch(e2){ throw e2; }
+    posts = null; setView(true);
+    $('sheet').innerHTML = `<button class="close" id="close" type="button" aria-label="Close">&times;</button>
+      <div class="thanks"><h2>Posted!</h2><p>Your post is now in the gallery. Thank you for sharing.</p><button class="btn primary" id="done" type="button">See the gallery</button></div>`;
+    $('close').addEventListener('click', closeRecipe); $('done').addEventListener('click', closeRecipe); $('done').focus();
+  }catch(e){
+    uploaded.forEach(x => sb('/storage/v1/object/gallery/' + x, { method:'DELETE' }).catch(() => {}));
+    btn.disabled = false; btn.textContent = label;
+    console.error(e);
+    err(e.status === 401 || e.status === 403 ? 'Your sign-in has expired. Please sign in again.' : 'That did not go through: ' + e.message);
+  }
+}
+/* email links (confirm account, reset password) come back to the site with a token in the address */
+async function handleAuthReturn(){
+  const h = location.hash.slice(1);
+  if(!GALLERY_ON || !/access_token=/.test(h)) return;
+  const q = new URLSearchParams(h);
+  history.replaceState(null, '', location.pathname + location.search);
+  try{
+    const user = await fetch(SB + '/auth/v1/user', { headers:{ apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + q.get('access_token') } }).then(r => r.json());
+    saveSession(toSession({ access_token:q.get('access_token'), refresh_token:q.get('refresh_token'), expires_in:+q.get('expires_in') || 3600, user }));
+    await checkAdmin();
+    if(q.get('type') === 'recovery') openNewPassword(); else setView(true);
+  }catch(e){ console.error(e); }
+}
+function openNewPassword(){
+  $('sheet').className = 'sheet formsheet';
+  $('sheet').innerHTML = `<h2>Choose a new password</h2>
+    <form id="npform" novalidate><div class="field"><label for="np">New password</label><input class="tx" type="password" id="np" autocomplete="new-password"></div>
+    <p class="err" id="nperr" role="alert" hidden></p><button class="btn primary" type="submit">Save password</button></form>`;
+  $('npform').addEventListener('submit', async e => {
+    e.preventDefault();
+    if($('np').value.length < 6){ $('nperr').textContent = 'Please use at least 6 characters.'; $('nperr').hidden = false; return; }
+    try{ await sb('/auth/v1/user', jsonOpts('PUT', { password: $('np').value })); hideRecipe(); setView(true); }
+    catch(er){ $('nperr').textContent = er.message; $('nperr').hidden = false; }
+  });
+  $('modal').hidden = false; document.body.classList.add('locked'); $('np').focus();
+}
+
+/* ---------- recipe sheet ---------- */
+function openRecipe(r){
+  const ing = r.ingredients.map((t,i) => t.startsWith('## ') ? `<li class="grp">${esc(t.slice(3))}</li>` : `<li><label for="ing${i}"><input type="checkbox" id="ing${i}"><span>${esc(t)}</span></label></li>`).join('');
+  const stepsHtml = (() => {
+    let out = '', open = false;
+    r.steps.forEach(t => {
+      if(t.startsWith('## ')){ if(open){ out += '</ol>'; open = false; } out += `<h4 class="grp">${esc(t.slice(3))}</h4>`; }
+      else { if(!open){ out += '<ol class="steps">'; open = true; } out += `<li>${esc(t)}</li>`; }
+    });
+    return out + (open ? '</ol>' : '');
+  })();
+  const notes = (r.notes && r.notes.length) ? `<section class="notes"><h3>${miniFlower()}Notes</h3><ul>${r.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></section>` : '';
+  $('sheet').className = 'sheet';
+  $('sheet').setAttribute('aria-label', r.title);
+  $('sheet').innerHTML = `
+    <button class="close" id="close" type="button" aria-label="Close recipe">&times;</button>
+    <div class="hero">
+      <div class="hero-cover">${cover(r)}</div>
+      <div>
+        <div class="cat">${esc(r.cat)}</div>
+        <h2>${esc(r.title)}</h2>
+        ${(r.time || r.serves || r.makes || tagsOf(r).length) ? `<div class="chips">${r.time ? `<span class="chip"><b>Time</b> ${esc(r.time)}</span>` : ''}${r.serves ? `<span class="chip"><b>Serves</b> ${esc(r.serves)}</span>` : ''}${r.makes ? `<span class="chip"><b>Makes</b> ${esc(r.makes)}</span>` : ''}${tagsOf(r).map(tagHtml).join('')}</div>` : ''}
+        ${r.from ? `<p class="from">From ${esc(r.from)}</p>` : ''}
+        <div><button class="favbtn" type="button" data-fav-id="${esc(r.id)}" aria-pressed="${favs.has(r.id)}">${HEART}<span>${favs.has(r.id) ? 'Saved to favorites' : 'Save to favorites'}</span></button></div>
+      </div>
+    </div>
+    ${r.table ? tableHtml(r.table) : ''}<div class="cols"${r.table ? ' hidden' : ''}>
+      <section><h3>${miniFlower()}Ingredients</h3>${r.ingredients.length ? `<ul class="ings">${ing}</ul>` : '<p class="soon">Ingredients coming soon.</p>'}</section>
+      <section><h3>${miniFlower()}Instructions</h3>${r.steps.length ? stepsHtml : '<p class="soon">Instructions coming soon.</p>'}</section>
+    </div>
+    ${notes}`;
+  $('close').addEventListener('click', closeRecipe);
+  $('modal').hidden = false;
+  document.body.classList.add('locked');
+  $('modal').scrollTop = 0;
+  $('close').focus();
+}
+function closeRecipe(){
+  if(location.hash) location.hash = '';
+  else hideRecipe();
+}
+function hideRecipe(){
+  if($('modal').hidden || gated()) return;
+  $('modal').hidden = true;
+  document.body.classList.remove('locked');
+  window.scrollTo(0, lastY);
+  if(lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+function route(){
+  const h = location.hash.slice(1);
+  if(gated()){ applyGate(); return; }
+  if(h === 'request-recipe' || h === 'add-recipe'){ openForm(h === 'add-recipe' ? 'add' : 'request'); return; }
+  if(GALLERY_ON && h === 'share-photo'){ openShare(); return; }
+  if(GALLERY_ON && h === 'admin'){ if(view !== 'admin') setView('admin'); return; }
+  if(GALLERY_ON && h === 'account'){ authMode = 'in'; openAuth(); return; }
+  if(h === 'gallery'){ if(view !== 'gallery') setView('gallery'); return; }
+  const r = recipes.find(x => x.id === h);
+  if(r){ openRecipe(r); } else { hideRecipe(); }
+}
+window.addEventListener('scroll', () => { if($('modal').hidden) lastY = window.scrollY; }, {passive:true});
+document.addEventListener('click', e => {
+  const c = e.target.closest('.card, .btn'); if(c) lastFocus = c;
+});
+$('modal').addEventListener('click', e => { if(e.target === $('modal')) closeRecipe(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape' && !$('modal').hidden) closeRecipe(); });
+window.addEventListener('hashchange', route);
+
+renderTabs();
+renderGf();
+renderSoon();
+renderNeeds();
+renderFavPill();
+renderGrid();
+if(GALLERY_ON) $('galbtn').hidden = false;
+renderAcct();
+checkAdmin();
+if(session){ syncFavs(); loadRecipes(); }
+handleAuthReturn().then(route);
+</script>
+</body>
+</html>
