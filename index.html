@@ -148,6 +148,32 @@ body.ingallery #grid,body.ingallery #empty,body.ingallery #foot,body.ingallery .
 .gal-head p{margin:4px 0 0;color:var(--ink-soft)}
 .gal-who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.95rem;color:var(--ink-soft)}
 .adminbadge{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--marigold);color:var(--ink);margin-left:4px}
+.subtabs{display:flex;gap:8px;margin:0 0 22px}
+.periods{display:flex;gap:8px;margin:0 0 18px}
+.periods .tab[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:var(--ink)}
+.note{margin:0 0 18px;padding:10px 14px;border-radius:12px;background:var(--butter);color:var(--ink-soft);max-width:760px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin:0 0 22px}
+.stat{background:var(--paper);border-radius:18px;padding:14px 18px;box-shadow:0 1px 0 rgba(120,90,50,.05),0 8px 24px rgba(160,105,40,.1)}
+.stat .sv{font-family:var(--display);font-size:2rem;line-height:1.1;font-weight:500}
+.stat .sl{font-weight:600;margin-top:2px}
+.stat .ss{font-size:.84rem;color:var(--ink-soft)}
+.panel{background:var(--paper);border-radius:20px;padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(120,90,50,.05),0 8px 24px rgba(160,105,40,.1)}
+.panel .adm-h{margin:0 0 4px}.panel .hint{margin:0 0 10px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin:0 0 18px}.two .panel{margin:0}
+.chart{width:100%;height:auto;display:block}
+.chart .gl{stroke:var(--sand);stroke-width:1}.chart .gl.base{stroke:#D9C9AC}
+.chart .ax{font-size:11px;fill:var(--ink-soft);font-family:var(--body)}
+.chart .bar{fill:#E58A12}
+.chart rect[data-tip]:hover{fill:rgba(229,138,18,.1)}
+.tip{position:fixed;z-index:60;background:var(--ink);color:#FFF4DA;font-size:.85rem;padding:5px 10px;border-radius:8px;pointer-events:none;white-space:nowrap}
+.tv{margin-top:6px;font-size:.9rem;color:var(--ink-soft)}.tv summary{cursor:pointer}
+.dtab{border-collapse:collapse;font-size:.9rem;margin-top:8px}.dtab th,.dtab td{text-align:left;padding:5px 16px 5px 0;border-bottom:1px solid var(--sand)}.dtab.wide{width:100%}
+.hb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.hb li{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;align-items:center;gap:10px;font-size:.93rem}
+.hb .nm{overflow-wrap:anywhere}
+.hb .tr{height:14px}
+.hb .tr i{display:block;height:14px;background:#E58A12;border-radius:0 4px 4px 0}
+.hb .vl{color:var(--ink-soft);min-width:2ch;text-align:right}
 .adm-h{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0 0 8px}
 .members{list-style:none;margin:0;padding:0}
 .members{max-width:720px}
@@ -704,7 +730,12 @@ document.addEventListener('click', e => {
   if(favOnly) renderGrid();
 });
 $('soonf').addEventListener('click', () => { soonOnly = !soonOnly; renderSoon(); renderGrid(); });
-$('q').addEventListener('input', e => { query = e.target.value.trim(); renderGrid(); });
+let searchTimer;
+$('q').addEventListener('input', e => {
+  query = e.target.value.trim(); renderGrid();
+  clearTimeout(searchTimer);
+  if(query.length >= 2) searchTimer = setTimeout(() => track('search', query.toLowerCase(), recipes.filter(matches).length), 1500);
+});
 
 /* ---------- request / add forms (sent by email through Web3Forms) ---------- */
 const WEB3FORMS_KEY = 'df4627f1-25c0-470e-85cd-b236420f89a2';
@@ -819,7 +850,7 @@ function saveSession(s){
   try{ s ? localStorage.setItem(SESSION_KEY, JSON.stringify(s)) : localStorage.removeItem(SESSION_KEY); }catch(e){}
   if(s){
     if(document.body.classList.contains('gated')) ungate();
-    if(!prev || prev.user.id !== s.user.id){ syncFavs(); loadRecipes(); }
+    if(!prev || prev.user.id !== s.user.id){ syncFavs(); loadRecipes(); setTimeout(trackVisit, 500); }
   } else {
     favs = new Set(); saveFavs();
     recipes = []; cats = []; recipesLoaded = false;
@@ -842,6 +873,19 @@ function ungate(){
   document.body.classList.remove('gated');
   try{ localStorage.setItem('moo-ruchi-seen', '1'); }catch(e){}
   hideRecipe();
+}
+/* light usage tracking, tied to the signed-in account and visible only to admins */
+let lastTrack = '';
+function track(type, ref, n){
+  if(!session) return;
+  const key = type + '|' + (ref || '') + '|' + Math.floor(Date.now() / 10000);
+  if(key === lastTrack) return; lastTrack = key;
+  const row = { type }; if(ref) row.ref = String(ref).slice(0, 120); if(n !== undefined) row.n = n;
+  sb('/rest/v1/events', jsonOpts('POST', row, { Prefer:'return=minimal' })).catch(() => {});
+}
+function trackVisit(){
+  try{ if(sessionStorage.getItem('moo-visit')) return; sessionStorage.setItem('moo-visit', '1'); }catch(e){}
+  track('visit');
 }
 /* recipes are loaded from the database, only for signed-in people */
 async function loadRecipes(){
@@ -1031,11 +1075,12 @@ function setView(v){
   $('galbtn').setAttribute('aria-pressed', String(v === 'gallery'));
   renderTabs(); renderAcct();
   if(v === 'gallery'){
+    track('gallery_view');
     history.replaceState(null, '', '#gallery');
     if(posts === null){ renderGallery(); loadPosts(); } else renderGallery();
   } else if(v === 'admin'){
-    history.replaceState(null, '', '#admin'); renderAdmin();
-  } else if(location.hash === '#gallery' || location.hash === '#admin'){
+    history.replaceState(null, '', adminTab === 'analytics' ? '#analytics' : '#admin'); renderAdmin();
+  } else if(location.hash === '#gallery' || location.hash === '#admin' || location.hash === '#analytics'){
     history.replaceState(null, '', location.pathname + location.search);
   }
   window.scrollTo(0, 0);
@@ -1136,19 +1181,93 @@ async function submitAuth(){
   }
 }
 
-let adminReady = false;
+let adminReady = false, adminTab = 'members', anaDays = 30;
+function adminHead(){
+  return `<div class="gal-head"><div><h2>Admin</h2><p>${adminTab === 'analytics' ? 'How the family is using Moo-ruchi.' : 'Everyone with an account. Admins can delete any gallery photo and manage roles.'}</p></div></div>
+    <div class="subtabs" role="tablist" aria-label="Admin sections"><button class="tab" role="tab" type="button" data-atab="members" aria-selected="${adminTab === 'members'}">Members</button><button class="tab" role="tab" type="button" data-atab="analytics" aria-selected="${adminTab === 'analytics'}">Analytics</button></div>`;
+}
 async function renderAdmin(){
   const el = $('adminpage');
   if(!session){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>Please sign in as an admin to see this page.</p></div></div>'; return; }
   if(!adminReady){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2></div></div><p class="gal-msg">Loading...</p>'; return; }
   if(!isAdmin){ el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>This page is for admins only.</p></div></div>'; return; }
-  el.innerHTML = '<div class="gal-head"><div><h2>Admin</h2><p>Everyone with an account. Admins can delete any gallery photo and manage roles.</p></div></div><div id="mlist"><p class="gal-msg">Loading members...</p></div>';
+  el.innerHTML = adminHead() + '<div id="abody"><p class="gal-msg">Loading...</p></div>';
+  if(adminTab === 'analytics') return renderAnalytics();
   try{
     const list = await sb('/rest/v1/rpc/list_members', jsonOpts('POST', {}));
-    $('mlist').innerHTML = `<h3 class="adm-h">Members <span class="n">${list.length}</span></h3><ul class="members">${list.map(m => `<li><div class="mi"><b>${esc(m.name || 'No name')}</b> ${m.is_admin ? '<span class="adminbadge">Admin</span>' : ''}<small>${esc(m.email)} &middot; joined ${esc(fmtDate(m.created_at))}</small></div>${m.id === session.user.id ? '<span class="hint">You</span>' : `<button class="btn" type="button" data-role="${esc(m.id)}" data-make="${!m.is_admin}">${m.is_admin ? 'Make regular user' : 'Make admin'}</button>`}</li>`).join('')}</ul><p class="err" id="merr" role="alert" hidden></p>`;
-  }catch(e){ $('mlist').innerHTML = '<p class="err">Could not load members: ' + esc(e.message) + '</p>'; }
+    $('abody').innerHTML = `<h3 class="adm-h">Members <span class="n">${list.length}</span></h3><ul class="members">${list.map(m => `<li><div class="mi"><b>${esc(m.name || 'No name')}</b> ${m.is_admin ? '<span class="adminbadge">Admin</span>' : ''}<small>${esc(m.email)} &middot; joined ${esc(fmtDate(m.created_at))}</small></div>${m.id === session.user.id ? '<span class="hint">You</span>' : `<button class="btn" type="button" data-role="${esc(m.id)}" data-make="${!m.is_admin}">${m.is_admin ? 'Make regular user' : 'Make admin'}</button>`}</li>`).join('')}</ul><p class="err" id="merr" role="alert" hidden></p>`;
+  }catch(e){ $('abody').innerHTML = '<p class="err">Could not load members: ' + esc(e.message) + '</p>'; }
 }
+/* ---- analytics ---- */
+const nf = n => Number(n || 0).toLocaleString();
+const dayLbl = d => new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month:'short', day:'numeric' });
+function niceMax(m){ if(m <= 4) return 4; const p = Math.pow(10, Math.floor(Math.log10(m))); const f = m / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+function barChart(daily, key, label){
+  const W = 720, H = 190, L = 34, R = 8, T = 14, B = 26, iw = W - L - R, ih = H - T - B;
+  const vals = daily.map(d => d[key]), max = niceMax(Math.max(0, ...vals)), slot = iw / daily.length, bw = Math.min(24, Math.max(3, slot - 2));
+  const y = v => T + ih - (v / max) * ih;
+  const grid = [0, .5, 1].map(f => { const v = Math.round(max * f), yy = y(v); return `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" class="gl"/><text x="${L - 6}" y="${yy + 4}" text-anchor="end" class="ax">${nf(v)}</text>`; }).join('');
+  const step = Math.ceil(daily.length / 7);
+  const bars = daily.map((d, i) => {
+    const x = L + i * slot + (slot - bw) / 2, h = (d[key] / max) * ih, tip = `${dayLbl(d.day)}: ${nf(d[key])} ${label}`;
+    const r = Math.min(4, bw / 2, h);
+    const path = h > 0 ? `<path class="bar" d="M${x},${T + ih} V${T + ih - h + r} Q${x},${T + ih - h} ${x + r},${T + ih - h} H${x + bw - r} Q${x + bw},${T + ih - h} ${x + bw},${T + ih - h + r} V${T + ih} Z"/>` : '';
+    return `${path}<rect x="${L + i * slot}" y="${T}" width="${slot}" height="${ih}" fill="transparent" data-tip="${esc(tip)}"/>${i % step === 0 ? `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" class="ax">${esc(dayLbl(d.day))}</text>` : ''}`;
+  }).join('');
+  const tbl = `<table class="dtab"><thead><tr><th>Day</th><th>${esc(label)}</th></tr></thead><tbody>${daily.map(d => `<tr><td>${esc(dayLbl(d.day))}</td><td>${nf(d[key])}</td></tr>`).join('')}</tbody></table>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="${esc(label)} per day">${grid}<line x1="${L}" x2="${W - R}" y1="${T + ih}" y2="${T + ih}" class="gl base"/>${bars}</svg><details class="tv"><summary>View as table</summary>${tbl}</details>`;
+}
+function hbars(items, valKey, nameFn, unit){
+  if(!items.length) return '<p class="hint">Nothing yet.</p>';
+  const max = Math.max(...items.map(i => i[valKey]));
+  return `<ul class="hb">${items.map(i => `<li><span class="nm">${esc(nameFn(i))}</span><span class="tr"><i style="width:${Math.max(3, i[valKey] / max * 100)}%"></i></span><span class="vl">${nf(i[valKey])}</span></li>`).join('')}</ul>`;
+}
+async function renderAnalytics(){
+  const body = $('abody');
+  try{
+    const a = await sb('/rest/v1/rpc/admin_analytics', jsonOpts('POST', { days: anaDays }));
+    const daily = a.daily || [];
+    const stat = (v, l, sub) => `<div class="stat"><div class="sv">${nf(v)}</div><div class="sl">${esc(l)}</div>${sub ? `<div class="ss">${esc(sub)}</div>` : ''}</div>`;
+    const periods = [7, 30, 90].map(d => `<button class="tab" type="button" data-days="${d}" aria-pressed="${anaDays === d}">${d} days</button>`).join('');
+    const noData = (a.visits + a.recipe_views) === 0 ? '<p class="note">Visit and recipe-view tracking started today, so those numbers fill in as people use the site. Members, favorites and gallery numbers are complete.</p>' : '';
+    body.innerHTML = `
+      <div class="periods" role="group" aria-label="Time range">${periods}</div>
+      ${noData}
+      <div class="stats">
+        ${stat(a.members_total, 'Members', a.new_members + ' new in ' + anaDays + ' days')}
+        ${stat(a.active_7d, 'Active this week', a.active_period + ' in ' + anaDays + ' days')}
+        ${stat(a.visits, 'Visits', 'last ' + anaDays + ' days')}
+        ${stat(a.recipe_views, 'Recipe views', 'last ' + anaDays + ' days')}
+        ${stat(a.posts_total, 'Gallery posts', nf(a.photos_total) + ' photos, ' + a.posts_period + ' new')}
+        ${stat(a.favorites_total, 'Favorites saved', 'across ' + a.recipes_total + ' recipes')}
+      </div>
+      <section class="panel"><h3 class="adm-h">Daily visitors</h3><p class="hint">Different people who opened the site each day.</p>${barChart(daily, 'visitors', 'visitors')}</section>
+      <section class="panel"><h3 class="adm-h">Recipe views per day</h3>${barChart(daily, 'views', 'views')}</section>
+      <div class="two">
+        <section class="panel"><h3 class="adm-h">Most viewed recipes</h3>${hbars(a.top_viewed, 'views', i => i.title)}</section>
+        <section class="panel"><h3 class="adm-h">Most favorited</h3>${hbars(a.top_favorited, 'saves', i => i.title)}</section>
+        <section class="panel"><h3 class="adm-h">What people search for</h3>${hbars(a.top_searches, 'times', i => i.term + (i.results === 0 ? ' (no results)' : ''))}</section>
+        <section class="panel"><h3 class="adm-h">Searches with no results</h3><p class="hint">Recipes people looked for and did not find. Good ideas to add next.</p>${hbars(a.missed_searches, 'times', i => i.term)}</section>
+        <section class="panel"><h3 class="adm-h">Gallery contributors</h3>${hbars(a.contributors, 'posts', i => i.name + ' (' + nf(i.photos) + ' photos)')}</section>
+      </div>
+      <section class="panel"><h3 class="adm-h">Member activity</h3>
+        <table class="dtab wide"><thead><tr><th>Name</th><th>Joined</th><th>Last seen</th><th>Visits</th></tr></thead><tbody>${a.members.map(m => `<tr><td>${esc(m.name || 'No name')}</td><td>${esc(fmtDate(m.joined))}</td><td>${m.last_seen ? esc(fmtDate(m.last_seen)) : 'Not yet'}</td><td>${nf(m.visits)}</td></tr>`).join('')}</tbody></table>
+      </section>`;
+  }catch(e){ body.innerHTML = '<p class="err">Could not load analytics: ' + esc(e.message) + '</p>'; }
+}
+const tipEl = document.createElement('div'); tipEl.className = 'tip'; tipEl.hidden = true; document.body.appendChild(tipEl);
+$('adminpage').addEventListener('mousemove', e => {
+  const t = e.target.closest('[data-tip]');
+  if(!t){ tipEl.hidden = true; return; }
+  tipEl.textContent = t.dataset.tip; tipEl.hidden = false;
+  tipEl.style.left = Math.min(e.clientX + 14, window.innerWidth - tipEl.offsetWidth - 8) + 'px'; tipEl.style.top = (e.clientY - 38) + 'px';
+});
+$('adminpage').addEventListener('mouseleave', () => { tipEl.hidden = true; });
 $('adminpage').addEventListener('click', async e => {
+  const at = e.target.closest('[data-atab]');
+  if(at){ adminTab = at.dataset.atab; history.replaceState(null, '', adminTab === 'analytics' ? '#analytics' : '#admin'); renderAdmin(); return; }
+  const dy = e.target.closest('[data-days]');
+  if(dy){ anaDays = +dy.dataset.days; renderAdmin(); return; }
   const b = e.target.closest('[data-role]'); if(!b) return;
   b.disabled = true;
   try{ await sb('/rest/v1/rpc/set_admin', jsonOpts('POST', { target: b.dataset.role, make_admin: b.dataset.make === 'true' })); renderAdmin(); }
@@ -1245,6 +1364,7 @@ function openNewPassword(){
 
 /* ---------- recipe sheet ---------- */
 function openRecipe(r){
+  track('recipe_view', r.id);
   const ing = r.ingredients.map((t,i) => t.startsWith('## ') ? `<li class="grp">${esc(t.slice(3))}</li>` : `<li><label for="ing${i}"><input type="checkbox" id="ing${i}"><span>${esc(t)}</span></label></li>`).join('');
   const stepsHtml = (() => {
     let out = '', open = false;
@@ -1296,7 +1416,7 @@ function route(){
   if(gated()){ applyGate(); return; }
   if(h === 'request-recipe' || h === 'add-recipe'){ openForm(h === 'add-recipe' ? 'add' : 'request'); return; }
   if(GALLERY_ON && h === 'share-photo'){ openShare(); return; }
-  if(GALLERY_ON && h === 'admin'){ if(view !== 'admin') setView('admin'); return; }
+  if(GALLERY_ON && (h === 'admin' || h === 'analytics')){ adminTab = h === 'analytics' ? 'analytics' : 'members'; if(view !== 'admin') setView('admin'); else renderAdmin(); return; }
   if(GALLERY_ON && h === 'account'){ authMode = 'in'; openAuth(); return; }
   if(h === 'gallery'){ if(view !== 'gallery') setView('gallery'); return; }
   const r = recipes.find(x => x.id === h);
@@ -1319,7 +1439,7 @@ renderGrid();
 if(GALLERY_ON) $('galbtn').hidden = false;
 renderAcct();
 checkAdmin();
-if(session){ syncFavs(); loadRecipes(); }
+if(session){ syncFavs(); loadRecipes(); trackVisit(); }
 handleAuthReturn().then(route);
 </script>
 </body>
