@@ -152,6 +152,10 @@ body.ingallery #grid,body.ingallery #empty,body.ingallery #foot,body.ingallery .
 .flags input{width:18px;height:18px;margin:0;accent-color:#4F7A44}
 .adminbox{margin-top:22px;padding:14px 18px;border:1px dashed #E2CDA2;border-radius:16px;background:var(--butter)}
 .adminbox h3{margin:0 0 10px;font-size:.95rem;font-weight:500;color:var(--ink-soft);display:flex;align-items:center;gap:8px}
+.nophoto{display:flex;align-items:center;justify-content:center;width:100%;min-height:150px;background:linear-gradient(160deg,#FFF4DA,#FBE3D6);color:var(--ink-soft);font-style:italic;font-size:.92rem}
+.photorow{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.photorow .btn{cursor:pointer}
+.photorow .phmsg{color:var(--ink-soft);font-size:.9rem}
 .needs-toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
 .needs-toggle input{width:20px;height:20px;margin:0;accent-color:#C96A12}
 .nnote{margin-top:10px;width:100%;font:inherit;font-size:.95rem;color:var(--ink);background:#fff;border:1px solid var(--sand);border-radius:12px;padding:9px 12px}
@@ -380,6 +384,7 @@ h4.grp:first-child{margin-top:4px}
   .sheet{padding:20px;border-radius:22px}
   .hero{grid-template-columns:1fr;gap:18px}
   .hero-cover svg{height:230px}
+  .hero-cover .nophoto{min-height:230px}
   .hero-cover img{height:230px;object-fit:cover}
   .hero h2{padding-right:0}
   .cols{grid-template-columns:1fr;gap:28px}
@@ -497,6 +502,9 @@ function bowl(x,y,r,fill,gar,rand,dots){
 
 /* ---------- cover: a plate (or a cup) inside a soft ring of flowers on a pale ground ---------- */
 function cover(r, par, card){
+  if(r.photo && !photoSigned[r.photo]){
+    return `<div class="nophoto" style="aspect-ratio:${esc(r.ar || '4/3')}"><span>Photo coming soon</span></div>`;
+  }
   if(r.photo){
     const st = (card && r.ar) ? ` style="aspect-ratio:${r.ar};object-fit:cover${r.pos ? ';object-position:' + r.pos : ''}"` : '';
     return `<img src="${esc(photoSigned[r.photo] || '')}" width="${r.pw}" height="${r.ph}" alt="${esc(r.title)}" loading="lazy"${st}>`;
@@ -1278,7 +1286,41 @@ function renderNeedsTab(){
 function refreshNeedsTabLabel(){
   const tb = document.querySelector('[data-atab="needs"]'); if(tb) tb.innerHTML = 'Needs more' + (needsCount() ? ` <span class="n">${needsCount()}</span>` : '');
 }
+
+/* admin: upload or replace a recipe's photo (private bucket) */
+async function resizePhoto(file){
+  const bmp = await createImageBitmap(file);
+  const max = 1000, k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const blob = await new Promise((ok, no) => c.toBlob(b => b ? ok(b) : no(new Error('Could not read that photo.')), 'image/jpeg', 0.82));
+  return { blob, w: c.width, h: c.height };
+}
+const AR_CHOICES = [['2/3',2/3],['3/4',.75],['4/5',.8],['1/1',1],['5/4',1.25],['4/3',4/3],['3/2',1.5]];
+async function uploadRecipePhoto(id, file, input){
+  const msg = $('phmsg'), say = t => { if(msg) msg.textContent = t; };
+  const r = recipes.find(x => x.id === id); if(!r) return;
+  input.disabled = true; say('Uploading...');
+  try{
+    const { blob, w, h } = await resizePhoto(file);
+    const path = r.photo || (id + '.jpg');
+    await sb('/storage/v1/object/recipe-photos/' + path.split('/').map(encodeURIComponent).join('/'), { method:'POST', headers:{ 'Content-Type':'image/jpeg', 'x-upsert':'true' }, body: blob });
+    const cur = await sb('/rest/v1/recipes?select=data&id=eq.' + encodeURIComponent(id));
+    const data = Object.assign({}, cur && cur[0] && cur[0].data);
+    const q = w / h, ar = AR_CHOICES.reduce((a, b) => Math.abs(b[1] - q) < Math.abs(a[1] - q) ? b : a)[0];
+    Object.assign(data, { photo: path, pw: w, ph: h, ar });
+    const saved = await sb('/rest/v1/recipes?id=eq.' + encodeURIComponent(id), jsonOpts('PATCH', { data }, { Prefer:'return=representation' }));
+    if(!saved || !saved.length) throw new Error('Could not save the photo to the recipe.');
+    const signed = await sb('/storage/v1/object/sign/recipe-photos', jsonOpts('POST', { expiresIn: 6 * 3600, paths: [path] })) || [];
+    signed.forEach(x => { if(x.signedURL) photoSigned[x.path] = SB + '/storage/v1' + x.signedURL; });
+    Object.assign(r, { photo: path, pw: w, ph: h, ar });
+    renderGrid(); openRecipe(r);
+    const m2 = $('phmsg'); if(m2) m2.textContent = 'Photo saved.';
+  }catch(er){ console.error(er); input.disabled = false; input.value = ''; say(er.message || 'The photo could not be uploaded.'); }
+}
 document.addEventListener('change', async e => {
+  const pu = e.target.closest('[data-photo-up]');
+  if(pu){ if(pu.files && pu.files[0]) uploadRecipePhoto(pu.dataset.photoUp, pu.files[0], pu); return; }
   const tg = e.target.closest('[data-needs-toggle]');
   if(tg){
     const id = tg.dataset.needsToggle, want = tg.checked; tg.disabled = true;
@@ -1534,7 +1576,8 @@ function adminNeedsBox(r){
   const on = r.id in needs;
   return `<section class="adminbox"><h3><span class="adminbadge">Admin</span> Only you see this</h3>
     <label class="needs-toggle"><input type="checkbox" data-needs-toggle="${esc(r.id)}"${on ? ' checked' : ''}> Add to my Needs more list</label>
-    ${on ? `<input class="tx nnote" type="text" data-needs-note="${esc(r.id)}" value="${esc(needs[r.id])}" maxlength="1000" placeholder="What does it need? e.g. cooking times, a better photo" aria-label="What this recipe needs">` : ''}</section>`;
+    ${on ? `<input class="tx nnote" type="text" data-needs-note="${esc(r.id)}" value="${esc(needs[r.id])}" maxlength="1000" placeholder="What does it need? e.g. cooking times, a better photo" aria-label="What this recipe needs">` : ''}
+    <div class="photorow"><label class="btn"><input type="file" accept="image/*" hidden data-photo-up="${esc(r.id)}">${photoSigned[r.photo] ? 'Replace photo' : 'Upload photo'}</label><span class="phmsg" id="phmsg" role="status"></span></div></section>`;
 }
 function openRecipe(r){
   track('recipe_view', r.id);
