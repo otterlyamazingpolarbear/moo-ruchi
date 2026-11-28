@@ -502,7 +502,7 @@ function bowl(x,y,r,fill,gar,rand,dots){
 
 /* ---------- cover: a plate (or a cup) inside a soft ring of flowers on a pale ground ---------- */
 function cover(r, par, card){
-  if(r.photo && !photoSigned[r.photo]){
+  if(!r.photo || !photoSigned[r.photo]){
     return `<div class="nophoto" style="aspect-ratio:${esc(r.ar || '4/3')}"><span>Photo coming soon</span></div>`;
   }
   if(r.photo){
